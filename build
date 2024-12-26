@@ -1,0 +1,26 @@
+#!/usr/bin/bash
+set -euxo pipefail
+
+build() {
+    dotnet fable core/Core.fsproj -o core/dist/dev --noRestore
+    npx parcel build core --cache-dir .obj/parcel
+    npx parcel build vscode --no-source-maps --cache-dir .obj/parcel
+}
+
+package() {
+    _vsce package $@
+}
+
+publish() {
+    _vsce publish $@
+}
+
+_vsce() {
+    cp README.md vscode
+    cd "$(dirname ${BASH_SOURCE[0]})"/vscode
+    sed -i s/svg/png/g README.md
+    vsce "$@" --allow-star-activation
+    cd ..
+}
+
+[[ "$@" == '' ]] && build || "$@"

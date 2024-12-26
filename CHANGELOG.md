@@ -1,4 +1,38 @@
-See also [https://github.com/stkb/vscode-rewrap/releases](https://github.com/stkb/vscode-rewrap/releases) (for working links to issues)
+See also [https://github.com/dnut/rewrap/releases](https://github.com/dnut/rewrap/releases) (for working links to issues)
+
+#### 17.8
+- Fix error when using "Rewrap At..." command (#324)
+#### 17.7
+- New feature: Run rewrap on save (#165)
+- Markdown: Fix front-matter marker rules (#321)
+- Support VS Code for the Web (#314): Attempt 2
+#### 17.6
+- Support .rmd files as markdown (#245)
+- Basic support for Textile files as markdown (#271)
+- Support FIDL (#255), Pascal/Delphi (#97) & pylintrc files (#121)
+- Shell script: Ignore shebangs (#129)
+- Attempt at supporting VS Code for the Web (#314)
+#### 17.5
+- Add '//'-comments to CSS (workaround for #309)
+- Fix batch files: case-insensitive "REM" and "@" prefix (#313)
+- Fix the document being 'modified' if there were no actual changes (#308, #315)
+- Rewritten code that applies edits to the document and fixes the selections after
+  wrapping. Is more efficient and should hopefully fix issues with autowrap when typing
+  too fast (#207). For the most part you should notice no changes but please report any
+  bugs where the selection after wrapping is not as expected.
+#### 17.4
+- Make the rule of ending a line with 2 spaces to preserve the line-break after work everywhere.
+- Support Prisma (#306)
+#### 17.3
+- MDX files: Treat as Markdown.
+#### 17.2
+- Lua: Support `--[=[` block comments (#290)
+- VS Code: Attempt to prevent rare "TextEditor has been disposed" error (#100)
+#### 17.1
+- VS Code: Change extension activation event from on startup to "onStartupFinished". This
+  should help to avoid slowing down VS Code startup. Testing to see if any problems come
+  from this.
+
 
 ---
 
@@ -96,7 +130,7 @@ This is a small release to push out unreleased changes and support Visual Studio
   comment is taken as-is with all indents being relative to the least indented
   line (that has text). [This allows the first line of a comment to be an
   indented code
-  block](https://github.com/stkb/Rewrap/issues/203#issuecomment-637767932),
+  block](https://github.com/dnut/rewrap/issues/203#issuecomment-637767932),
   which previously wasn't possible.
 - Fix issues that broke wrapping for extension-contributed languages in v1.12.0.
 - Markdown: Fix preserving indents in blockquote (#204).
@@ -228,7 +262,7 @@ Mostly bugfixes:
 
 ## 1.6.0
 
-- **Added auto-wrap feature (#45)** ([more info](https://github.com/stkb/Rewrap/wiki/Auto-wrap)).
+- **Added auto-wrap feature (#45)** ([more info](https://github.com/dnut/rewrap/wiki/Auto-wrap)).
 - Added languages: Lean and D (extra support for D doc-comments still to come)
 
 - Fixed: With reformat setting on, code blocks in comments and markdown documents now have
@@ -256,9 +290,9 @@ Mostly bugfixes:
 
 ## 1.5.0
 
-- Added multiple ruler support ([VSCode](https://github.com/stkb/Rewrap/wiki/Settings-VSCode#wrapping-to-rulers), [VS](https://github.com/stkb/Rewrap/wiki/Settings-Visual-Studio#wrapping-to-rulers)). (#30)
+- Added multiple ruler support ([VSCode](https://github.com/dnut/rewrap/wiki/Settings-VSCode#wrapping-to-rulers), [VS](https://github.com/dnut/rewrap/wiki/Settings-Visual-Studio#wrapping-to-rulers)). (#30)
 - Added Git tag editing as a document type.
-- VSCode: Removed old keybinding (ctrl+k ctrl+w) ([how to add it back](https://github.com/stkb/Rewrap/wiki/Keybindings-VSCode#old-keybinding))
+- VSCode: Removed old keybinding (ctrl+k ctrl+w) ([how to add it back](https://github.com/dnut/rewrap/wiki/Keybindings-VSCode#old-keybinding))
 - VS: Fixed bug in Options screen (#44)
 
 
@@ -283,7 +317,7 @@ Rewrap is now also available for Visual Studio!
 
 The main change in this release is that all<sup>1</sup> comments now are parsed as Markdown (CommonMark spec), enabling wrapping of bulleted/numbered lists and all other Markdown features.<sup>2</sup>
 
-Additionally, a new setting: `wholeCommment`, has been added to give more control over wrapping comments. See [here](https://github.com/stkb/Rewrap/wiki/Settings-VSCode#wrapping-whole-or-parts-of-comments).
+Additionally, a new setting: `wholeCommment`, has been added to give more control over wrapping comments. See [here](https://github.com/dnut/rewrap/wiki/Settings-VSCode#wrapping-whole-or-parts-of-comments).
 
 Added languages:
 - Elixir

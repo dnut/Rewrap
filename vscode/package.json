@@ -1,6 +1,6 @@
 {
-  "name": "rewrap",
-  "displayName": "Rewrap",
+  "name": "rewrap-revived",
+  "displayName": "Rewrap Revived",
   "description": "Hard word wrapping for comments and other text at a given column.",
   "keywords": [
     "word wrap",
@@ -12,21 +12,20 @@
     "paragraph",
     "multi-root ready"
   ],
-  "version": "1.16.3",
-  "publisher": "stkb",
+  "version": "17.8.0",
+  "publisher": "dnut",
   "icon": "logo.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/stkb/Rewrap.git"
+    "url": "https://github.com/dnut/rewrap.git"
   },
   "bugs": {
-    "url": "https://github.com/stkb/Rewrap/issues",
-    "email": "scsavtnk@gmail.com"
+    "url": "https://github.com/dnut/rewrap/issues"
   },
   "license": "SEE LICENSE IN LICENSE",
   "engines": {
     "node": ">=12.x",
-    "vscode": "^1.45.0"
+    "vscode": "^1.63.0"
   },
   "extensionKind": [
     "ui",
@@ -37,7 +36,10 @@
   ],
   "markdown": "standard",
   "activationEvents": [
-    "*"
+    "onStartupFinished",
+    "onCommand:rewrap.rewrapComment",
+    "onCommand:rewrap.rewrapCommentAt",
+    "onCommand:rewrap.toggleAutoWrap"
   ],
   "main": "./dist/Extension.js",
   "browser": "./dist/Extension.js",
@@ -88,6 +90,12 @@
           "default": false,
           "description": "(EXPERIMENTAL) When wrapping lines, reformat paragraph indents."
         },
+        "rewrap.onSave": {
+          "scope": "language-overridable",
+          "type": "boolean",
+          "default": false,
+          "description": "Do a rewrap on the whole document when saving."
+        },
         "rewrap.autoWrap.enabled": {
           "scope": "language-overridable",
           "type": "boolean",
@@ -118,12 +126,19 @@
       }
     ]
   },
-  "dependencies": {
+  "devDependencies": {
     "fast-diff": "^1.2.0",
-    "json5": "^2.2.0"
+    "json5": "^2.2.0",
+    "localtunnel": "^2.0.2",
+    "serve": "^13.0.2"
   },
   "source": "src/Extension.ts",
   "targets": {
+    "main": {
+      "includeNodeModules": {
+        "vscode": false
+      }
+    },
     "browser": false
   }
 }

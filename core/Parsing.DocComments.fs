@@ -61,13 +61,6 @@ let javadoc =
   splitBeforeTags tagRegex matchParser markdownWithInlineTags
 
 
-/// DartDoc has just a few special tags. We keep lines beginning with these
-/// unwrapped.
-let dartdoc =
-  let tagRegex = Regex(@"^\s*(@nodoc|{@template|{@endtemplate|{@macro)")
-  splitBeforeTags tagRegex (fun _ -> ignoreFirstLine markdown) markdown
-
-
 let psdoc =
   let tagRegex = Regex(@"^\s*\.([A-Z]+)")
   let codeLineRegex = Regex(@"^\s*PS C:\\>")
@@ -98,19 +91,6 @@ let ddoc =
     markdown
 
 
-/// Godoc comments use a godoc compatible parser instead of markdown.
-/// Here, any lines that are indented more than the "standard" aren't wrapped.
-///
-/// https://blog.golang.org/godoc-documenting-go-code
-let godoc settings =
-    let indentedLines =
-        ignoreParser (Nonempty.span (fun line -> line.[0] = ' ' || line.[0] = '\t'))
-    let textLines =
-        splitIntoChunks (afterRegex (Regex("  $"))) >> map (Wrap << Wrappable.fromLines ("", ""))
-
-    textLines
-        |> takeUntil (tryMany [blankLines; indentedLines])
-        |> repeatToEnd
 
 let xmldoc =
     let blank = docOf ignoreAll

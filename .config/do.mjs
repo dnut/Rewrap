@@ -178,8 +178,7 @@ function runTests ({production} = {}) {
   if (targetVSCode) {
     buildVSCode ({production})
     if (process.env.TERM_PROGRAM == 'vscode') log ("Can't run VS Code tests inside VS Code")
-    // VSCode tests not yet fixed in stable; are in prerelease
-    // else run ("Running VS Code tests", 'node vscode/test/run.cjs')
+    else run ("Running VS Code tests", 'node vscode/test/run.cjs')
   }
 }
 
@@ -251,7 +250,7 @@ function createVSCReadme () {
 
 async function githubRelease (body) {
   const github = new Octokit({auth: process.env.GITHUB_PAT}).repos
-  const ownerRepo = {owner: "stkb", repo: "Rewrap"}
+  const ownerRepo = {owner: "dnut", repo: "Rewrap"}
   const ver = Version.fromVSC ()
 
   let old_release

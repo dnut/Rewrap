@@ -26,15 +26,6 @@ let private indentWidth (ctx: Context) (line: Line) : int =
   let ws = line.content.Substring (0, line.content.Length - line.content.TrimStart().Length)
   strWidth' (strWidth tabWidth line.prefix) tabWidth ws
 
-/// Returns the line with its whitespace indent trimmed and the width of the trim. IE the
-/// same as trimWhitespace but also returns the width of the trim
-let private trimIndent (ctx: Context) (line: Line) : int * Line =
-  let tabWidth = ctx.settings.tabWidth
-  let newContent = line.content.TrimStart()
-  let ws = line.content.Substring (0, line.content.Length - newContent.Length)
-  let indentWidth = strWidth' (strWidth tabWidth line.prefix) tabWidth ws
-  indentWidth, Line (line.prefix + ws, newContent)
-
 let private compareIndents ctx line1 line2 = prefixWidth ctx line2 - prefixWidth ctx line1
 
 let private finishedOnPrev : FirstLineRes ->  NextLineRes = FinishedOnPrev << Some
@@ -262,40 +253,6 @@ let private transitionOrTitle : TryNewParser = fun ctx ->
 
 
 //---------- Container blocks ----------------------------------------------------------//
-
-
-/// Makes a container. Takes a prefix-modifying function, and a function to test each line
-/// to check we're still in the container, before passing the line to the inner parser.
-let private container : ContentParser -> PrefixTransformer -> (Line -> Option<Line>) -> Context -> FirstLineParser =
-  fun content prefixFn lineTest ctx ->
-
-  let rec wrapFLR : FirstLineRes -> FirstLineRes = function
-  | Pending r -> Pending (wrapResultParser (nlpWrapper r.isDefault) r)
-  | Finished r -> Finished (wrapResultParser (fun p -> Some (flpWrapper r.isDefault p)) r)
-
-  and flpWrapper wasPara maybeInnerParser line : FirstLineRes =
-    match lineTest line with
-    | Some line -> (maybeInnerParser |? content ctx) line |> wrapFLR
-    | None ->
-        match maybeInnerParser, wasPara with
-        | Some p, true -> wrapFLR (p line)
-        | _ -> (maybeInnerParser |? content ctx) line
-
-  and nlpWrapper wasPara innerParser line : NextLineRes =
-    match lineTest line with
-    | Some line -> innerParser line |> function
-      | ThisLine flr -> ThisLine (wrapFLR flr)
-      | FinishedOnPrev maybeThisLineRes ->
-          let tlr = maybeThisLineRes ||? fun () -> content ctx line
-          FinishedOnPrev <| Some (wrapFLR tlr)
-    | None when not wasPara -> FinishedOnPrev None
-    | None -> innerParser line |> function
-      | ThisLine x -> ThisLine (wrapFLR x)
-      // This should only occur if the paragraph parser found a
-      // (non-paragraph) interruption. So we're out (don't wrap result)
-      | FinishedOnPrev x -> FinishedOnPrev x
-
-  content ctx >> wrapFLR >> wrapPrefixFn prefixFn
 
 
 /// All other explicit markup blocks are not wrapped, while we work out the details

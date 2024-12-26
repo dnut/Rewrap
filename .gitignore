@@ -13,3 +13,6 @@
 /vscode/README.md
 bin/
 obj/
+/venv
+.parcel-cache
+rewrap-*.vsix

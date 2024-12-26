@@ -7,7 +7,7 @@ You can switch to the Pre-Release channel from within VS Code (v1.63 or above) b
 the extension's page and then choosing **Switch to Pre-Release Version** (make sure to hit
 "Reload Required" after it's installed).
 
-<img src="https://stkb.github.io/Rewrap/images/switch-to-prerelease.png" width="600"/>
+<img src="https://dnut.github.io/Rewrap/images/switch-to-prerelease.png" width="600"/>
 
 You don't have to be using VS Code Insiders to do this. You can painlessly switch back to
 the stable channel at any time too. [More info at the VS Code docs](

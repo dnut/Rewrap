@@ -30,6 +30,8 @@ let tryMatch : Regex -> Line -> string array option =
 /// Like tryMatch, but just returns the match's success
 let isMatch : Regex -> Line -> bool = fun rx -> tryMatch' rx >> Option.isSome
 
+/// Alias for String.IsNullOrWhiteSpace
+let isBlank : string -> bool = String.IsNullOrWhiteSpace
 
 /// If the line (after the prefix) is just whitespace
 let isBlankLine : Line -> bool = Line.onContent String.IsNullOrWhiteSpace
@@ -41,6 +43,15 @@ let indentLength : Line -> int = Line.onContent (fun s -> s.Length - s.TrimStart
 // Adjusts the line splitpoint so that all whitespace is trimmed from the content
 let trimWhitespace : Line -> Line =
   Line.trimUpTo Int32.MaxValue
+
+/// Returns the line with its whitespace indent trimmed and the width of the trim. I.E.
+/// the same as trimWhitespace but also returns the width of the trim
+let trimIndent (ctx: Context) (line: Line) : int * Line =
+  let tabWidth = ctx.settings.tabWidth
+  let newContent = line.content.TrimStart()
+  let ws = line.content.Substring (0, line.content.Length - newContent.Length)
+  let indentWidth = strWidth' (strWidth tabWidth line.prefix) tabWidth ws
+  indentWidth, Line (line.prefix + ws, newContent)
 
 
 //---------- Line Results --------------------------------------------------------------//
@@ -93,6 +104,40 @@ let wrapPrefixFn prefixFn =
 let voidParseLine = fun _ -> ()
 
 
+/// Makes a container. Takes a prefix-modifying function, and a function to test each line
+/// to check we're still in the container, before passing the line to the inner parser.
+let container : ContentParser -> PrefixTransformer -> (Line -> Option<Line>) -> ContentParser =
+  fun content prefixFn lineTest ctx ->
+
+  let rec wrapFLR : FirstLineRes -> FirstLineRes = function
+  | Pending r -> Pending (wrapResultParser (nlpWrapper r.isDefault) r)
+  | Finished r -> Finished (wrapResultParser (fun p -> Some (flpWrapper r.isDefault p)) r)
+
+  and flpWrapper wasPara maybeInnerParser line : FirstLineRes =
+    match lineTest line with
+    | Some line -> (maybeInnerParser |? content ctx) line |> wrapFLR
+    | None ->
+        match maybeInnerParser, wasPara with
+        | Some p, true -> wrapFLR (p line)
+        | _ -> (maybeInnerParser |? content ctx) line
+
+  and nlpWrapper wasPara innerParser line : NextLineRes =
+    match lineTest line with
+    | Some line -> innerParser line |> function
+      | ThisLine flr -> ThisLine (wrapFLR flr)
+      | FinishedOnPrev maybeThisLineRes ->
+          let tlr = maybeThisLineRes ||? fun () -> content ctx line
+          FinishedOnPrev <| Some (wrapFLR tlr)
+    | None when not wasPara -> FinishedOnPrev None
+    | None -> innerParser line |> function
+      | ThisLine x -> ThisLine (wrapFLR x)
+      // This should only occur if the paragraph parser found a
+      // (non-paragraph) interruption. So we're out (don't wrap result)
+      | FinishedOnPrev x -> FinishedOnPrev x
+
+  content ctx >> wrapFLR >> wrapPrefixFn prefixFn
+
+
 //---------- Common Parsers ------------------------------------------------------------//
 
 
@@ -112,6 +157,11 @@ let blankLine : TryNewParser =
 let nonText : TryNewParser = fun _ctx ->
   let rx = Regex "[A-Za-z0-9\u00C0-\uFFFF]"
   fun line -> if isMatch rx line then None else Some (finished_ line noWrapBlock)
+
+/// Ignores (marks as no-wrap) all lines given to it
+let ignoreAll : ContentParser =
+  let rec parseLine line = pending line noWrapBlock (ThisLine << parseLine)
+  fun _ctx -> parseLine
 
 
 //---------- Other ---------------------------------------------------------------------//

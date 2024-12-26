@@ -1,6 +1,6 @@
 <table class="hideOnDocsSite"><tr><td>
 
-These docs are best viewed at https://stkb.github.io/Rewrap
+These docs are best viewed at https://dnut.github.io/Rewrap
 </td></tr></table>
 
 --8<-- "README.md"

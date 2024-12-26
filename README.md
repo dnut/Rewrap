@@ -4,22 +4,22 @@ GitHub. For GitHub we can't get rid of the border on the td nor make the font sm
 we want-->
 <table class="topright" align="right" style="font-size:90%;width:auto;margin:0;border:none">
 <tr style="border:none"><td align="right" style="border:none">
-For <a href="https://marketplace.visualstudio.com/items?itemName=stkb.rewrap"><b>VS Code</b></a>,
-<a href="https://open-vsx.org/extension/stkb/rewrap"><b>Open VSX</b></a> and
+For <a href="https://marketplace.visualstudio.com/items?itemName=dnut.rewrap-revived"><b>VS Code</b></a>,
+<a href="https://open-vsx.org/extension/dnut/rewrap-revived"><b>Open VSX</b></a> and
 <a href="https://marketplace.visualstudio.com/items?itemName=stkb.Rewrap-18980">
   <b>Visual Studio</b></a>.<br/>
 Latest stable version <b>1.16.3</b> / pre-release <b>17.x</b> /
-<a href="https://github.com/stkb/vscode-rewrap/releases">changelog</a>
+<a href="https://github.com/dnut/rewrap/releases">changelog</a>
 </td></tr></table>
 
 
 <h1 style="font-size: 2.5em">Rewrap</h1>
 
-<img src="https://stkb.github.io/Rewrap/images/example.svg" width="700px"/><br/><br/>
+<img src="https://dnut.github.io/Rewrap/images/example.svg" width="700px"/><br/><br/>
 
 The main Rewrap command is: <sn>**Rewrap Comment / Text**</sn>, by default bound to
 `Alt+Q`. With the cursor in a comment block, hit this to re-wrap the contents to the
-[specified wrapping column](https://stkb.github.io/Rewrap/configuration/#wrapping-column).
+[specified wrapping column](https://dnut.github.io/Rewrap/configuration/#wrapping-column).
 
 
 ## Features
@@ -33,7 +33,7 @@ The main Rewrap command is: <sn>**Rewrap Comment / Text**</sn>, by default bound
 The contents of comments are usually parsed as markdown, so you can use lists, code
 samples (which are untouched) etc:
 
-<img src="https://stkb.github.io/Rewrap/images/example1.svg" width="700px"/>
+<img src="https://dnut.github.io/Rewrap/images/example1.svg" width="700px"/>
 
-<div class="hideOnDocsSite"><br/><b><a href="https://stkb.github.io/Rewrap/">
+<div class="hideOnDocsSite"><br/><b><a href="https://dnut.github.io/Rewrap/">
 See the docs site for more info.</a></b></div>
