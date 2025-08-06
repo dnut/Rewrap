@@ -38,10 +38,15 @@ let dartdoc_markdown ctx = dartdoc markdown_noHeader ctx
 /// ESLint configuration comments parser that prevents wrapping of eslint-disable lines
 /// https://github.com/dnut/Rewrap/issues/33
 let eslintConfigComments : ContentParser -> ContentParser =
-  fun content ctx line ->
-    if isMatch (regex @"^\s*//\s*eslint-(disable-next-line|disable-line)") line then
+  fun content ctx ->
+
+  let rx = regex @"^\s*//\s*eslint-(disable-next-line|disable-line)"
+
+  fun line ->
+    if isMatch rx line then
       finished_ line noWrapBlock
-    else content ctx line
+    else
+      content ctx line
 
 let ignoreAll ctx = Parsing_Internal.ignoreAll ctx
 
