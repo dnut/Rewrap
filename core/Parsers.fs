@@ -35,6 +35,14 @@ let dartdoc : ContentParser -> ContentParser =
 
 let dartdoc_markdown ctx = dartdoc markdown_noHeader ctx
 
+/// ESLint configuration comments parser that prevents wrapping of eslint-disable lines
+/// https://github.com/dnut/Rewrap/issues/33
+let eslintConfigComments : ContentParser -> ContentParser =
+  fun content ctx line ->
+  if isMatch (regex @"^\s*//\s*eslint-(disable|enable)") line then
+    finished_ line noWrapBlock
+  else content ctx line
+
 let ignoreAll ctx = Parsing_Internal.ignoreAll ctx
 
 let godoc : ContentParser = fun _ctx ->
