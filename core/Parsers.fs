@@ -39,7 +39,7 @@ let dartdoc_markdown ctx = dartdoc markdown_noHeader ctx
 /// https://github.com/dnut/Rewrap/issues/33
 let eslintConfigComments : ContentParser -> ContentParser =
   fun content ctx line ->
-  if isMatch (regex @"^\s*//\s*eslint-(disable|enable)") line then
+  if isMatch (regex @"^\s*//\s*eslint-(disable-next-line|disable-line)") line then
     finished_ line noWrapBlock
   else content ctx line
 
