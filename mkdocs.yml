@@ -46,6 +46,7 @@ nav:
 - 'Getting Started': README.md
 - configuration.md
 - extra-features.md
+- CONTRIBUTING.md
 - 'Specs':
   - specs/README.md
   - 'Features':
