@@ -92,3 +92,28 @@ All blank lines are trimmed at the end. (This is true of all non-wrapping lines)
 
     //··    ¦      ->      //      ¦     -or-     //      ¦
     //····  ¦              //      ¦              //      ¦
+
+## ESLint directive comments
+
+ESLint line directives in JavaScript/TypeScript must stay on a single line to keep their
+effect.
+
+> language: javascript
+
+    // eslint-disable-next-line @typescript-eslint/no-base-to-string -- ModuleSource returns useful information from .toString()
+    nextLoad(url).source    ¦      ->      // eslint-disable-next-line @typescript-eslint/no-base-to-string -- ModuleSource returns useful information from .toString()
+    nextLoad(url).source                   nextLoad(url).source    ¦
+
+> language: typescript
+
+    // eslint-disable-line @typescript-eslint/no-base-to-string -- ModuleSource returns useful information from .toString()
+    nextLoad(url).source    ¦      ->      // eslint-disable-line @typescript-eslint/no-base-to-string -- ModuleSource returns useful information from .toString()
+    nextLoad(url).source                   nextLoad(url).source    ¦
+
+    // eslint-disable no-console, @typescript-eslint/no-base-to-string -- temporary exception for migration script
+    nextLoad(url).source    ¦      ->      // eslint-disable no-console, @typescript-eslint/no-base-to-string -- temporary exception for migration script
+    nextLoad(url).source                   nextLoad(url).source    ¦
+
+    // eslint-enable no-console, @typescript-eslint/no-base-to-string -- restore lint checks after migration script
+    nextLoad(url).source    ¦      ->      // eslint-enable no-console, @typescript-eslint/no-base-to-string -- restore lint checks after migration script
+    nextLoad(url).source                   nextLoad(url).source    ¦

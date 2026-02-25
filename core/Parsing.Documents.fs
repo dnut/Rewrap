@@ -46,6 +46,15 @@ let private configFile = sc [line "#"]
 let java : DocumentProcessor =
   sc [ jsDocBlock; cBlock; line' "//[/!]" jsdoc_markdown; line "//" ]
 
+let private cBlockWithEslint =
+  block' ("*", "") (@"/\*", @"\*/") (eslintConfigComments markdown)
+
+let private jsDocBlockWithEslint =
+  block' ("*", " * ") javadocMarkers (eslintConfigComments jsdoc_markdown)
+
+let javascript : DocumentProcessor =
+  sc [ jsDocBlockWithEslint; cBlockWithEslint; line' "//[/!]" (eslintConfigComments jsdoc_markdown); line' "//" (eslintConfigComments markdown) ]
+
 // Takes 4 args to create a Language:
 //  1. display name (used only in VS)
 //  2. string of aliases (language IDs used by the client. Not needed if they only differ
@@ -129,7 +138,7 @@ let mutable languages = [
     lang "INI" "" ".ini" <| sc [line "[#;]"]
     lang "J" "" ".ijs" <| sc [line @"NB\."]
     lang "Java" "" ".java" java
-    lang "JavaScript" "javascriptreact|js" ".js|.jsx" java
+    lang "JavaScript" "javascriptreact|js" ".js|.jsx" javascript
     lang "Julia" "" ".jl" <| sc [block ("#=", "=#"); line "#"; block (@".*?""""""", "\"\"\"")]
     lang "JSON" "json5|jsonc" ".json|.json5|.jsonc" java
     lang "LaTeX" "tex" ".bbx|.cbx|.cls|.sty|.tex"
@@ -182,7 +191,7 @@ let mutable languages = [
     lang "Tcl" "" ".tcl" <| configFile
     lang "Textile" "" ".textile" <| docOf markdown
     lang "TOML" "" ".toml" <| configFile
-    lang "TypeScript" "typescriptreact" ".ts|.tsx" java
+    lang "TypeScript" "typescriptreact" ".ts|.tsx" javascript
     lang "Verilog/SystemVerilog" "systemverilog|verilog" ".sv|.svh|.v|.vh|.vl" java
     lang "XAML" "" ".xaml"
         html
