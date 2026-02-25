@@ -188,7 +188,7 @@ let mutable languages = [
         html
     lang "XML" "xsl" ".xml|.xsl"
         html
-    lang "YAML" "" ".yaml|.yml"
+    lang "YAML" "github-actions-workflow" ".yaml|.yml"
         // Also allow text paragraphs to be wrapped. Though wrapping the whole
         // file at once will mess it up.
         <| toNewDocProcessor (fun settings ->
