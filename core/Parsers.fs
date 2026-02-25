@@ -35,12 +35,12 @@ let dartdoc : ContentParser -> ContentParser =
 
 let dartdoc_markdown ctx = dartdoc markdown_noHeader ctx
 
-/// ESLint configuration comments parser that prevents wrapping of eslint-disable lines
+/// ESLint configuration comments parser that prevents wrapping of disable/enable lines
 /// https://github.com/dnut/Rewrap/issues/33
 let eslintConfigComments : ContentParser -> ContentParser =
   fun content ctx ->
 
-  let rx = regex @"^\s*eslint-(disable-next-line|disable-line)"
+  let rx = regex @"^\s*eslint-(disable(?:-(?:next-line|line))?|enable)\b"
 
   fun line ->
     if isMatch rx line then

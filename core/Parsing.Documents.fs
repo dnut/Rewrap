@@ -46,8 +46,14 @@ let private configFile = sc [line "#"]
 let java : DocumentProcessor =
   sc [ jsDocBlock; cBlock; line' "//[/!]" jsdoc_markdown; line "//" ]
 
+let private cBlockWithEslint =
+  block' ("*", "") (@"/\*", @"\*/") (eslintConfigComments markdown)
+
+let private jsDocBlockWithEslint =
+  block' ("*", " * ") javadocMarkers (eslintConfigComments jsdoc_markdown)
+
 let javascript : DocumentProcessor =
-  sc [ jsDocBlock; cBlock; line' "//[/!]" (eslintConfigComments jsdoc_markdown); line' "//" (eslintConfigComments markdown) ]
+  sc [ jsDocBlockWithEslint; cBlockWithEslint; line' "//[/!]" (eslintConfigComments jsdoc_markdown); line' "//" (eslintConfigComments markdown) ]
 
 // Takes 4 args to create a Language:
 //  1. display name (used only in VS)
