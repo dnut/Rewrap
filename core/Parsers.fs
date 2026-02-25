@@ -40,7 +40,7 @@ let dartdoc_markdown ctx = dartdoc markdown_noHeader ctx
 let eslintConfigComments : ContentParser -> ContentParser =
   fun content ctx ->
 
-  let rx = regex @"^\s*eslint-(disable(?:-(?:next-line|line))?|enable)\b"
+  let rx = regex @"^\s*(eslint-disable-next-line|eslint-disable-line|eslint-disable|eslint-enable)\b"
 
   fun line ->
     if isMatch rx line then
