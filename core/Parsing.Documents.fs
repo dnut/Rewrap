@@ -47,7 +47,7 @@ let java : DocumentProcessor =
   sc [ jsDocBlock; cBlock; line' "//[/!]" jsdoc_markdown; line "//" ]
 
 let javascript : DocumentProcessor =
-  sc [ jsDocBlock; cBlock; line' "//[/!]" (eslintConfigComments jsdoc_markdown); line "//" ]
+  sc [ jsDocBlock; cBlock; line' "//[/!]" (eslintConfigComments jsdoc_markdown); line' "//" (eslintConfigComments markdown) ]
 
 // Takes 4 args to create a Language:
 //  1. display name (used only in VS)
