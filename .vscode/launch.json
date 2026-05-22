@@ -7,9 +7,22 @@
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
-            "args": ["--extensionDevelopmentPath=${workspaceFolder}/vscode" ],
+            "args": [
+                "--extensionDevelopmentPath=${workspaceFolder}/vscode"
+            ],
             "sourceMaps": true,
             "preLaunchTask": "Build extension"
+        },
+        {
+            "name": "Extension (nix)",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--extensionDevelopmentPath=${workspaceFolder}/vscode"
+            ],
+            "sourceMaps": true,
+            "preLaunchTask": "Build extension (nix)"
         },
         {
             "name": "Web Extension",
@@ -25,12 +38,33 @@
             "preLaunchTask": "Build extension"
         },
         {
+            "name": "Web Extension (nix)",
+            "type": "pwa-extensionHost",
+            "debugWebWorkerHost": true,
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--extensionDevelopmentPath=${workspaceFolder}/vscode",
+                "--extensionDevelopmentKind=web"
+            ],
+            "sourceMaps": true,
+            "preLaunchTask": "Build extension (nix)"
+        },
+        {
             "name": "Core Tests",
             "type": "node",
             "request": "launch",
             "program": "${workspaceFolder}/core/test",
             "args": [],
             "preLaunchTask": "Build extension"
+        },
+        {
+            "name": "Core Tests (nix)",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/core/test",
+            "args": [],
+            "preLaunchTask": "Build extension (nix)"
         },
         {
             "name": "Extension Tests",
@@ -45,6 +79,20 @@
             ],
             "sourceMaps": true,
             "preLaunchTask": "Build extension"
+        },
+        {
+            "name": "Extension Tests (nix)",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--disable-extensions",
+                "--extensionDevelopmentPath=${workspaceFolder}/vscode",
+                "--extensionTestsPath=${workspaceFolder}/vscode/test/tests.cjs",
+                "${workspaceFolder}/vscode/test/fixture"
+            ],
+            "sourceMaps": true,
+            "preLaunchTask": "Build extension (nix)"
         }
     ]
 }

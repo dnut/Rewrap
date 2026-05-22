@@ -1,4 +1,5 @@
 {
+  "name": "rewrap-revived",
   "type": "module",
   "scripts": {
     "test": "run-script-os",

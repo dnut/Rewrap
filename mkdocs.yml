@@ -4,8 +4,7 @@ repo_url: https://github.com/dnut/rewrap
 site_dir: .obj/docsite
 strict: true
 theme:
-  name: null
-  custom_dir: ../mkdocs-material/material
+  name: material
   language: en
   font:
     text: Nunito
@@ -43,46 +42,73 @@ markdown_extensions:
   - pymdownx.tabbed:
       alternate_style: true
 nav:
-- 'Getting Started': README.md
-- configuration.md
-- extra-features.md
-- 'Specs':
-  - specs/README.md
-  - 'Features':
-    - specs/features/line-comments.md
-    - specs/features/block-comments.md
-    - specs/features/decoration-lines.md
-    - specs/features/selections.md
-    - specs/features/embedded-sections.md
-    - specs/features/double-sentence-spacing.md
-    - specs/features/tabs.md
-    - specs/features/spaces.md
-    - specs/features/special-characters.md
-    - specs/features/misc.md
-  - 'Content Types':
-    - specs/content-types/dotnet-xmldoc.md
-    - specs/content-types/batch-file.md
-    - specs/content-types/d.md
-    - specs/content-types/dart.md
-    - specs/content-types/doxygen.md
-    - specs/content-types/elixir.md
-    - specs/content-types/go.md
-    - specs/content-types/graphql.md
-    - specs/content-types/html.md
-    - specs/content-types/javadoc.md
-    - specs/content-types/julia.md
-    - specs/content-types/latex.md
-    - specs/content-types/lean.md
-    - specs/content-types/lua.md
-    - specs/content-types/markdown/_markdown.md
-    - specs/content-types/matlab.md
-    - specs/content-types/octave.md
-    - specs/content-types/plaintext.md
-    - specs/content-types/powershell.md
-    - specs/content-types/prolog.md
-    - specs/content-types/proto.md
-    - specs/content-types/python.md
-    - specs/content-types/r.md
-    - specs/content-types/restructuredtext/_restructuredtext.md
-    - specs/content-types/tcl.md
-    - specs/content-types/yaml.md
+  - "Getting Started": README.md
+  - configuration.md
+  - configuration-visual-studio.md
+  - prerelease-versions.md
+  - extra-features.md
+  - "Contributing": CONTRIBUTING.md
+  - "Specs":
+      - specs/README.md
+      - "Features":
+          - specs/features/line-comments.md
+          - specs/features/block-comments.md
+          - specs/features/decoration-lines.md
+          - specs/features/selections.md
+          - specs/features/embedded-sections.md
+          - specs/features/double-sentence-spacing.md
+          - specs/features/tabs.md
+          - specs/features/spaces.md
+          - specs/features/special-characters.md
+          - specs/features/misc.md
+      - "Content Types":
+          - specs/content-types/dotnet-xmldoc.md
+          - specs/content-types/batch-file.md
+          - specs/content-types/d.md
+          - specs/content-types/dart.md
+          - specs/content-types/doxygen.md
+          - specs/content-types/elixir.md
+          - specs/content-types/go.md
+          - specs/content-types/graphql.md
+          - specs/content-types/html.md
+          - specs/content-types/javadoc.md
+          - specs/content-types/julia.md
+          - specs/content-types/latex.md
+          - specs/content-types/lean.md
+          - specs/content-types/lua.md
+          - "Markdown":
+              - specs/content-types/markdown/_markdown.md
+              - specs/content-types/markdown/blockquotes.md
+              - specs/content-types/markdown/comments.md
+              - specs/content-types/markdown/fenced-code-blocks.md
+              - specs/content-types/markdown/footnotes.md
+              - specs/content-types/markdown/front-matter.md
+              - specs/content-types/markdown/headings.md
+              - specs/content-types/markdown/html.md
+              - specs/content-types/markdown/indented-code-blocks.md
+              - specs/content-types/markdown/linkrefdefs.md
+              - specs/content-types/markdown/lists.md
+              - specs/content-types/markdown/paragraphs.md
+              - specs/content-types/markdown/tables.md
+              - specs/content-types/markdown/thematic-breaks.md
+          - specs/content-types/matlab.md
+          - specs/content-types/octave.md
+          - specs/content-types/plaintext.md
+          - specs/content-types/powershell.md
+          - specs/content-types/prolog.md
+          - specs/content-types/proto.md
+          - specs/content-types/python.md
+          - specs/content-types/r.md
+          - "reStructuredText":
+              - specs/content-types/restructuredtext/_restructuredtext.md
+              - specs/content-types/restructuredtext/bullet-lists.md
+              - specs/content-types/restructuredtext/doctest-blocks.md
+              - specs/content-types/restructuredtext/enumerated-lists.md
+              - specs/content-types/restructuredtext/field-lists.md
+              - specs/content-types/restructuredtext/literal-blocks.md
+              - specs/content-types/restructuredtext/narrow-section-titles.md
+              - specs/content-types/restructuredtext/tables.md
+              - specs/content-types/restructuredtext/transitions-section-titles.md
+          - specs/content-types/tcl.md
+          - specs/content-types/yaml.md
+          - specs/content-types/zig.md

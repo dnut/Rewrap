@@ -32,6 +32,38 @@
             "isBackground": true,
             "label": "Watch",
             "problemMatcher": []
+        },
+        {
+            "type": "shell",
+            "command": "nix develop -c ./do build vscode",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "label": "Build extension (nix)",
+            "presentation": {
+                "reveal": "silent",
+                "focus": false,
+                "panel": "shared",
+                "clear": true
+            }
+        },
+        {
+            "type": "shell",
+            "command": "nix develop -c ./do core test",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "label": "Run core tests (nix)"
+        },
+        {
+            "type": "shell",
+            "command": "nix develop -c ./do watch",
+            "group": "build",
+            "isBackground": true,
+            "label": "Watch (nix)",
+            "problemMatcher": []
         }
     ]
 }
