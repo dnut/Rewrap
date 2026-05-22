@@ -100,20 +100,16 @@ effect.
 
 > language: javascript
 
-    // eslint-disable-next-line @typescript-eslint/no-base-to-string -- ModuleSource returns useful information from .toString()
-    nextLoad(url).source    ¦      ->      // eslint-disable-next-line @typescript-eslint/no-base-to-string -- ModuleSource returns useful information from .toString()
-    nextLoad(url).source                   nextLoad(url).source    ¦
+    // eslint-disable-next-line @typescript-eslint/no-base-to-string -- ModuleSource returns useful information from .toString()      ->      // eslint-disable-next-line @typescript-eslint/no-base-to-string -- ModuleSource returns useful information from .toString()
+    nextLoad(url).source    ¦                                                                                                                nextLoad(url).source    ¦
 
 > language: typescript
 
-    // eslint-disable-line @typescript-eslint/no-base-to-string -- ModuleSource returns useful information from .toString()
-    nextLoad(url).source    ¦      ->      // eslint-disable-line @typescript-eslint/no-base-to-string -- ModuleSource returns useful information from .toString()
-    nextLoad(url).source                   nextLoad(url).source    ¦
+    // eslint-disable-line @typescript-eslint/no-base-to-string -- ModuleSource returns useful information from .toString()           ->      // eslint-disable-line @typescript-eslint/no-base-to-string -- ModuleSource returns useful information from .toString()
+    nextLoad(url).source    ¦                                                                                                                nextLoad(url).source    ¦
 
-    // eslint-disable no-console, @typescript-eslint/no-base-to-string -- temporary exception for migration script
-    nextLoad(url).source    ¦      ->      // eslint-disable no-console, @typescript-eslint/no-base-to-string -- temporary exception for migration script
-    nextLoad(url).source                   nextLoad(url).source    ¦
+    // eslint-disable no-console, @typescript-eslint/no-base-to-string -- temporary exception for migration script      ->      // eslint-disable no-console, @typescript-eslint/no-base-to-string -- temporary exception for migration script
+    nextLoad(url).source    ¦                                                                                              nextLoad(url).source    ¦
 
-    // eslint-enable no-console, @typescript-eslint/no-base-to-string -- restore lint checks after migration script
-    nextLoad(url).source    ¦      ->      // eslint-enable no-console, @typescript-eslint/no-base-to-string -- restore lint checks after migration script
-    nextLoad(url).source                   nextLoad(url).source    ¦
+    // eslint-enable no-console, @typescript-eslint/no-base-to-string -- restore lint checks after migration script     ->      // eslint-enable no-console, @typescript-eslint/no-base-to-string -- restore lint checks after migration script
+    nextLoad(url).source    ¦                                                                                              nextLoad(url).source    ¦

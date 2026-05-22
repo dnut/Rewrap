@@ -89,10 +89,8 @@ single-line when wrapping comments.
 
 > language: javascript
 
-    /* eslint-disable no-console, @typescript-eslint/no-base-to-string -- temporary exception for migration script with long explanation that should stay intact on one line */
-    nextLoad(url).source    ¦      ->      /* eslint-disable no-console, @typescript-eslint/no-base-to-string -- temporary exception for migration script with long explanation that should stay intact on one line */
-    nextLoad(url).source                   nextLoad(url).source    ¦
+    /* eslint-disable no-console, @typescript-eslint/no-base-to-string -- temporary exception for migration script with long explanation that should stay intact on one line */      ->      /* eslint-disable no-console, @typescript-eslint/no-base-to-string -- temporary exception for migration script with long explanation that should stay intact on one line */
+    nextLoad(url).source    ¦                                                                                                                                                           nextLoad(url).source    ¦
 
-    /* eslint-enable no-console, @typescript-eslint/no-base-to-string -- restore lint checks after migration script with long explanation that should stay intact on one line */
-    nextLoad(url).source    ¦      ->      /* eslint-enable no-console, @typescript-eslint/no-base-to-string -- restore lint checks after migration script with long explanation that should stay intact on one line */
-    nextLoad(url).source                   nextLoad(url).source    ¦
+    /* eslint-enable no-console, @typescript-eslint/no-base-to-string -- restore lint checks after migration script with long explanation that should stay intact on one line */     ->      /* eslint-enable no-console, @typescript-eslint/no-base-to-string -- restore lint checks after migration script with long explanation that should stay intact on one line */
+    nextLoad(url).source    ¦                                                                                                                                                           nextLoad(url).source    ¦
