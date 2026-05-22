@@ -94,3 +94,9 @@ single-line when wrapping comments.
 
     /* eslint-enable no-console, @typescript-eslint/no-base-to-string -- restore lint checks after migration script with long explanation that should stay intact on one line */     ->      /* eslint-enable no-console, @typescript-eslint/no-base-to-string -- restore lint checks after migration script with long explanation that should stay intact on one line */
     nextLoad(url).source    ¦                                                                                                                                                           nextLoad(url).source    ¦
+
+    /*                                                      ->      /*
+     * Some comment text                                             * Some comment text
+     * eslint-disable no-console -- more comment text                * eslint-disable no-console -- more comment text
+     */                                                              */
+    nextLoad(url).source    ¦                                       nextLoad(url).source    ¦

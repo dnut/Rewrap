@@ -40,13 +40,28 @@ let dartdoc_markdown ctx = dartdoc markdown_noHeader ctx
 let eslintConfigComments : ContentParser -> ContentParser =
   fun content ctx ->
 
-  let rx = regex @"^\s*(eslint-disable-next-line|eslint-disable-line|eslint-disable|eslint-enable)\b"
-
-  fun line ->
-    if isMatch rx line then
+  let tryMatchDirective : Line -> Option<FirstLineRes> =
+    tryMatch' (regex @"^\s*(eslint-disable-next-line|eslint-disable-line|eslint-disable|eslint-enable)\b") <>>> fun (_, line) ->
       finished_ line noWrapBlock
-    else
-      content ctx line
+
+  let rec wrapFLR : FirstLineRes -> FirstLineRes = function
+  | Pending r -> Pending ^| wrapResultParser nlpWrapper r
+  | Finished r -> Finished ^| wrapResultParser (fun p -> Some (flpWrapper p)) r
+
+  and flpWrapper maybeInnerParser : FirstLineParser =
+    (tryMatchDirective |? (maybeInnerParser |? content ctx)) >> wrapFLR
+
+  and nlpWrapper innerParser : NextLineParser =
+    fun line ->
+      tryMatchDirective line
+        |> map (FinishedOnPrev << Some)
+        |> Option.defaultWith ^| fun _ ->
+          match innerParser line with
+          | ThisLine r -> ThisLine (wrapFLR r)
+          | FinishedOnPrev maybeR ->
+              FinishedOnPrev (wrapFLR <<|> (maybeR <|> (fun _ -> Some (content ctx line))))
+
+  (tryMatchDirective |? content ctx) >> wrapFLR
 
 let ignoreAll ctx = Parsing_Internal.ignoreAll ctx
 

@@ -113,3 +113,7 @@ effect.
 
     // eslint-enable no-console, @typescript-eslint/no-base-to-string -- restore lint checks after migration script     ->      // eslint-enable no-console, @typescript-eslint/no-base-to-string -- restore lint checks after migration script
     nextLoad(url).source    ¦                                                                                              nextLoad(url).source    ¦
+
+    // Some comment text                                                                        ->      // Some comment text
+    // eslint-disable-next-line @typescript-eslint/no-base-to-string -- more comment text               // eslint-disable-next-line @typescript-eslint/no-base-to-string -- more comment text
+    nextLoad(url).source    ¦                                                                           nextLoad(url).source    ¦
