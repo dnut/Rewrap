@@ -68,6 +68,7 @@ nav:
           - specs/content-types/dart.md
           - specs/content-types/doxygen.md
           - specs/content-types/elixir.md
+          - specs/content-types/eslint.md
           - specs/content-types/go.md
           - specs/content-types/graphql.md
           - specs/content-types/html.md
