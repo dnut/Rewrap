@@ -156,7 +156,7 @@ let mutable languages = [
     lang "Less" "" ".less" java
     lang "Lua" "" ".lua" <| sc [block (@"--\[(=*)\[", @"\]$1\]"); line "--"]
     lang "Makefile" "make" "makefile" <| configFile
-    lang "Markdown" "mdx" ".md|.mdx|.rmd" <| docOf markdown
+    lang "Markdown" "mdx" ".md|.mdx|.rmd|.qmd" <| docOf markdown
     // MATLAB uses .m but that's already taken for Objective-C
     lang "MATLAB" "" "" <| sc [line "%(?![%{}])"; block ("%\{", "%\}")]
     lang "Objective-C" "" ".m|.mm" java
