@@ -1,0 +1,41 @@
+name: Deploy Docs
+
+on:
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v27
+      - uses: actions/configure-pages@v5
+
+      - name: Build Docs
+        run: nix develop -c mkdocs build
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .obj/docsite
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

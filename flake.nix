@@ -48,7 +48,11 @@
             packages = with pkgs; [
               dotnet-sdk_6
               nodejs_21
-              python3
+              (python3.withPackages (ps: with ps; [
+                mkdocs
+                mkdocs-material
+                pymdown-extensions
+              ]))
               vsce
               xvfb-run
             ];
@@ -64,6 +68,7 @@
                   node   $(node --version)
                   npm    $(npm --version)
                   $(python3 --version)
+                  mkdocs $(mkdocs --version | awk '{print $3}')
                   vsce   $(vsce --version)
                   xvfb-run
 

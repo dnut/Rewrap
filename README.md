@@ -48,10 +48,9 @@ Rewrap Revived is available in both the
 [Microsoft marketplace](https://marketplace.visualstudio.com/items?itemName=dnut.rewrap-revived)
 and the [OpenVSX marketplace](https://open-vsx.org/extension/dnut/rewrap-revived).
 
-**Please install the pre-release version**. That way, you can identify any bugs and report
-them, so they don't make their way into the stable release. If you *do* observe a bug, then you
-can switch to the stable release, and rest assured that the bug will not be introduced there,
-since you have reported the issue (unless of course, it is already present in both releases).
+**Install the pre-release version** so you have access to the latest features, and so that if you
+encounter a new bug, you can fix it immediately on your machine by downgrading to the stable
+release. Then report it on github so it will be fixed before appearing in a stable release.
 
 ## Contributing
 
