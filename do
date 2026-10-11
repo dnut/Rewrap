@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Build, test, package, and publish the Rewrap Revived VS Code extension."""
 
+from __future__ import annotations
+
 import argparse
 import json
 import os
@@ -8,6 +10,7 @@ import re
 import shutil
 import subprocess
 import sys
+from dataclasses import dataclass
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
@@ -135,7 +138,7 @@ def package(args):
     readme.write_text(readme.read_text().replace(".svg", ".png"))
 
     version = read_version()
-    pre = "" if is_stable(version) else "--pre-release"
+    pre = "" if version.is_stable() else "--pre-release"
     path = VSIX.format(version=version)
 
     npx(args, f"vsce package {pre} -o ../{path}", cwd="vscode")
@@ -147,29 +150,26 @@ def publish(args):
         package(args)
 
     version = read_version()
-    pre = "" if is_stable(version) else "--pre-release"
+    pre = "" if version.is_stable() else "--pre-release"
     path = VSIX.format(version=version)
 
     npx(args, f"vsce publish {pre} -i {path}")
-    if is_stable(version):
-        npx(args, f"ovsx publish {pre} -i {path}")
+    npx(args, f"ovsx publish {pre} -i {path}")
 
 
 def version(args):
     if not args.version:
         print(read_version(), flush=True)
         return
-    write_version(args.version)
+    write_version(Version.parse(args.version))
     run("npm install", cwd="vscode")
 
 
 def release_notes(args):
-    version_number = args.version or read_version()
-    if version_number.startswith("v"):
-        version_number = version_number[1:]
+    version_number = Version.parse(args.version) if args.version else read_version()
 
     changelog = Path("CHANGELOG.md").read_text()
-    heading = re.search(rf"^#\s+{re.escape(version_number)}\s*$", changelog, re.MULTILINE)
+    heading = re.search(rf"^#\s+{re.escape(str(version_number))}\s*$", changelog, re.MULTILINE)
     if not heading:
         sys.exit(f"No changelog section found for {version_number}")
 
@@ -228,31 +228,46 @@ def build_vscode(args):
 VERSION_RE = re.compile(r'"version"\s*:\s*"([\d.]+)"', re.I)
 
 
-def read_version():
+def read_version() -> Version:
     with open("vscode/package.json") as f:
-        return json.load(f)["version"]
+        return Version.parse(json.load(f)["version"])
 
 
-def write_version(v):
-    sub_in_file("vscode/package.json", VERSION_RE, v)
-    sub_in_file("vs/source.extension.vsixmanifest", re.compile(r' Version="([\d.]+)"'), v)
-    parts = v.split(".")
-    major = int(parts[1]) if parts[0] == "1" else int(parts[0])
-    if is_stable(v):
-        sub_in_file("README.md", re.compile(r"version <b>([\d.]+)<"), v)
+def write_version(v: Version):
+    sub_in_file("vscode/package.json", VERSION_RE, str(v))
+    sub_in_file(
+        "vs/source.extension.vsixmanifest",
+        re.compile(r'Rewrap.* Version="([\d.]+)"'),
+        str(v) + ".0",
+    )
+    if v.is_stable():
+        sub_in_file("README.md", re.compile(r"version <b>([\d.]+)<"), str(v))
+        # This allows the README to show the latest stable as a pre-release if it is
+        # greater than the current pre-release version, since that is the version
+        # that will be installed by vscode for users on the pre-release channel.
+        prerelease_badge = re.compile(r"pre-release <b>([\d.]+)<")
+        match = prerelease_badge.search(Path("README.md").read_text())
+        if match and v > Version.parse(match.group(1)):
+            sub_in_file("README.md", prerelease_badge, str(v))
     else:
-        sub_in_file("README.md", re.compile(r"pre-release <b>([\d.x]+)<"), f"{major}.x")
+        sub_in_file("README.md", re.compile(r"pre-release <b>([\d.]+)<"), str(v))
 
 
-# TODO: reconsider this unusual approach to versioning
-# - pro: simulates separate stable and pre-release channels in marketplace
-# - con: version number meaning is confusing/ambiguous/inconsistent
-# - con: not semver compliant
-# - con: is a weird hack that requires extra bookkeeping
-def is_stable(v):
-    parts = v.split(".")
-    major = int(parts[1]) if parts[0] == "1" else int(parts[0])
-    return major == 1 or major % 2 == 0
+@dataclass(order=True)
+class Version:
+    major: int
+    minor: int
+    patch: int
+
+    def parse(s: str) -> Version:
+        """splits, validates, and converts to ints"""
+        return Version(*(int(i) for i in s.split(".")))
+
+    def __str__(self):
+        return f"{self.major}.{self.minor}.{self.patch}"
+
+    def is_stable(self: Version):
+        return self.minor % 2 == 1
 
 
 def sub_in_file(path, regex, replacement):

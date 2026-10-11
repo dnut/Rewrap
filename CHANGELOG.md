@@ -1,5 +1,8 @@
 See also [https://github.com/dnut/rewrap/releases](https://github.com/dnut/rewrap/releases) (for working links to issues)
 
+# 18.1.0
+
+Promote pre-release 17.10.0 to a stable release. Relative to the prior stable release (1.16.3), this includes all changes from 17.x.x pre-release versions.
 
 # 17.10.0
 
@@ -54,8 +57,6 @@ Maintenance:
   should help to avoid slowing down VS Code startup. Testing to see if any problems come
   from this.
 
-
----
 
 
 # 1.16.3

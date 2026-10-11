@@ -46,6 +46,7 @@ nav:
   - configuration.md
   - configuration-visual-studio.md
   - prerelease-versions.md
+  - versioning-scheme.md
   - extra-features.md
   - "Contributing": CONTRIBUTING.md
   - "Specs":
