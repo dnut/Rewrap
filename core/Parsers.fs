@@ -99,7 +99,7 @@ let private jsdoc : ContentParser -> ContentParser =
   and nlpWrapper innerParser : NextLineParser =
     freezeInlineTags >> fun line ->
       tryMatchTag line
-        |> map (FinishedOnPrev << Some)
+        |> map (FinishedOnPrev << Some << wrapFLR)
         |> Option.defaultWith ^| fun _ ->
           match innerParser line with
           | ThisLine r -> ThisLine (wrapFLR r)

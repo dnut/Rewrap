@@ -47,6 +47,15 @@ Where a line starts with a tag, it starts a new paragraph for wrapping.
      */            ¦                * text        ¦
                                     */
 
+This holds for every tag in a run of consecutive tags.
+
+    /**            ¦       ->      /**            ¦
+     * @a one      ¦                * @a one      ¦
+     * @b two      ¦                * @b two      ¦
+     * @c three    ¦                * @c three    ¦
+     * @d four     ¦                * @d four     ¦
+     */            ¦                */            ¦
+
 Where a tag stands alone on a line, the line break after it is preserved and
 text on the following line is not wrapped with it. Sometimes this style is
 preferred:
