@@ -81,3 +81,21 @@ used for created lines.
 
     ··/** Foo bar¦baz */      ->      ··/** Foo bar¦
                  ¦                       * baz */  ¦
+
+Similarly, when the first line of a multi-line comment wraps, the added lines get the
+prefix of the comment's body lines, or the default prefix if there are none.
+
+    /** Aaa bbb ccc ddd     ->      /** Aaa bbb ¦
+     */         ¦                    * ccc ddd  ¦
+                                     */         ¦
+
+    /** Aaa bbb ccc ddd     ->      /** Aaa bbb ¦
+     *          ¦                    * ccc ddd  ¦
+     * Eee.     ¦                    *          ¦
+     */         ¦                    * Eee.     ¦
+                                     */         ¦
+
+    /* Aaa bbb ccc ddd      ->      /* Aaa bbb ¦
+               ¦                       ccc ddd ¦
+       Eee. */ ¦                               ¦
+                                       Eee. */ ¦

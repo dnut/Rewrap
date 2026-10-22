@@ -66,9 +66,10 @@ type CommentFormat =
   | LineFmt of Line Nonempty * int
   /// Block comment (/* ... */) that has multiple lines. Takes the first line with type; a
   /// list of "body" lines; the last line separately, if it only contains the end comment
-  /// marker (without text preceeding it); and a string of characters that are allowed in
-  /// each line prefix (eg "*")
-  | MultiLineBlockFmt of Line * Line List * Line Option * string
+  /// marker (without text preceeding it); a string of characters that are allowed in
+  /// each line prefix (eg "*"); and the prefix to use for lines added after the first
+  /// line, if there are no body lines to take it from.
+  | MultiLineBlockFmt of Line * Line List * Line Option * string * (string -> string)
   /// Block comment, but one that's only on a single line. Takes the prefix to use if new
   /// lines are added.
   | SingleLineBlockFmt of Line * (string -> string)
@@ -109,7 +110,7 @@ let private inspectAndProcessContent :
     match fmt with
     | LineFmt (lines, initialIndent) ->
         lines :> seq<Line>, wsRegex, initialIndent
-    | MultiLineBlockFmt (_, tLines, _, bodyMarkers) ->
+    | MultiLineBlockFmt (_, tLines, _, bodyMarkers, _) ->
         let bm = if bodyMarkers <> "" then "[" + bodyMarkers + @"]?\s*" else ""
         tLines :> seq<Line>, regex (@"^\s*" + bm), 0
     | SingleLineBlockFmt _ ->
@@ -153,10 +154,18 @@ let private inspectAndProcessContent :
   let lines, prefixFn =
     match fmt with
       | LineFmt _ -> Nonempty.fromSeqUnsafe lines, id
-      | MultiLineBlockFmt (line, _, mbLastLine, _) ->
+      | MultiLineBlockFmt (line, _, mbLastLine, _, defaultPrefixFn) ->
         let last: seq<Line> =
           maybe Seq.empty (fun l -> Seq.singleton (upcast DecorationLine(l))) mbLastLine
-        line .@ List.ofSeq (Seq.append lines last), id
+        // Lines added after the first line (if it's wrapped on its own) get the prefix
+        // of the body lines in place of the first line's prefix, which includes the
+        // start marker.
+        let prefixFn =
+          match maybeBodyPrefix with
+          | Some bodyPrefix ->
+              fun (pre: string) -> bodyPrefix + pre.Substring(min pre.Length line.prefix.Length)
+          | None -> defaultPrefixFn
+        line .@ List.ofSeq (Seq.append lines last), prefixFn
       | SingleLineBlockFmt (typ_line, prefixFn) ->
           singleton typ_line, prefixFn
 
@@ -217,7 +226,7 @@ type private BlockCommentBlock
             if hasTextUpTo mEndIndex lastLine.content then tLines, None
             else List.rev bodyRev, Some lastLine
           let fl = mkFirstLine hLine.content.Length
-          MultiLineBlockFmt (fl, bodyLines, nonTextLastLine, bodyMarkers)
+          MultiLineBlockFmt (fl, bodyLines, nonTextLastLine, bodyMarkers, prefixFn)
 
     inspectAndProcessContent contentParser fmt ctx
 

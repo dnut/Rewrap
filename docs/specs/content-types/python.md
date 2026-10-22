@@ -87,6 +87,36 @@ Starting the string later on the line is also (imperfectly) supported.
 
 Imperfectly, because it's not a full language parser.
 
+When the first line of a docstring wraps, the opening quotes are not repeated on the
+new line. The new line gets the same indent as the body text of the docstring
+([#10](https://github.com/dnut/Rewrap/issues/10)), or that of the opening quotes if
+there is none.
+
+    ····"""Aaa bbb ccc ddd      ->      ····"""Aaa bbb ¦
+                   ¦                    ····ccc ddd    ¦
+    ····Eee.       ¦                                   ¦
+    ····"""        ¦                    ····Eee.       ¦
+                                        ····"""        ¦
+
+    ····"""Aaa bbb ccc ddd      ->      ····"""Aaa bbb ¦
+    ····"""        ¦                    ····ccc ddd    ¦
+                                        ····"""        ¦
+
+    ····r"""Aaa bbb ccc ddd     ->      ····r"""Aaa bbb ¦
+                    ¦                   ········ccc ddd ¦
+    ········Eee.    ¦                                   ¦
+    ····"""         ¦                   ········Eee.    ¦
+                                        ····"""         ¦
+
+This also holds when only the first line is selected
+([#22](https://github.com/dnut/Rewrap/issues/22)).
+
+    «"""Aaa bbb ccc ddd»      ->      """Aaa bbb ¦
+               ¦                      ccc ddd    ¦
+    Eee.       ¦                                 ¦
+    """        ¦                      Eee.       ¦
+                                      """        ¦
+
 Strings on one line are wrapped too,
 
     var = """a b c"""      ->      var = """a b
