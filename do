@@ -257,20 +257,23 @@ def build_vscode(args):
         run("npm install", cwd="vscode")
     if not Path("node_modules").exists():
         run("npm install")
+    # vscode has its own lockfile, so by default parcel only watches vscode/ for changes
+    # and keeps reusing its cached copy of core/dist. Watch the whole repo instead.
+    parcel_opts = "--cache-dir .obj/parcel --watch-dir ."
     if args.watch:
         return [
             popen("npx --silent tsc -w -p vscode --noEmit"),
-            popen("npx --silent parcel watch vscode --cache-dir .obj/parcel"),
+            popen(f"npx --silent parcel watch vscode {parcel_opts}"),
         ]
     if not outdated(VSCODE_MAIN, "vscode/src", "core"):
         return []
     npx(args, "tsc -p vscode --noEmit")
     if args.release:
         npx(args, "eslint vscode --ext .ts")
-        npx(args, "parcel build vscode --no-source-maps --cache-dir .obj/parcel")
+        npx(args, f"parcel build vscode --no-source-maps {parcel_opts}")
         unlink(VSCODE_MAIN + ".map")
     else:
-        npx(args, "parcel build vscode --no-optimize --cache-dir .obj/parcel")
+        npx(args, f"parcel build vscode --no-optimize {parcel_opts}")
     return []
 
 
