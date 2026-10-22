@@ -52,6 +52,8 @@ def parse_args():
     sub.add_parser("test", parents=[component, mode]).set_defaults(func=test)
     sub.add_parser("package", parents=[distribution]).set_defaults(func=package)
     sub.add_parser("publish", parents=[distribution]).set_defaults(func=publish)
+    sub.add_parser("install", parents=[distribution]).set_defaults(func=install)
+    sub.add_parser("uninstall").set_defaults(func=uninstall)
 
     version_parser = sub.add_parser("version")
     version_parser.add_argument("version", nargs="?", help="X.Y.Z to set; omit to print current")
@@ -155,6 +157,55 @@ def publish(args):
 
     npx(args, f"vsce publish {pre} -i {path}")
     npx(args, f"ovsx publish {pre} -i {path}")
+
+
+def install(args):
+    if not args.skip_build:
+        package(args)
+    path = VSIX.format(version=read_version())
+    if not Path(path).exists():
+        sys.exit(f"{path} not found. run without --skip-build to package it")
+
+    uninstall()
+    run(f"code --install-extension {path} --force")
+    print("\nrestart the extension host in vscode to use the new version", flush=True)
+
+
+def uninstall(*_):
+    with open("vscode/package.json") as f:
+        manifest = json.load(f)
+    ext_id = f"{manifest['publisher']}.{manifest['name']}".lower()
+
+    # Reinstalling the same version doesn't reliably replace the old copy, so
+    # remove every trace of it first. Uninstalling fails if it isn't installed,
+    # so use check=False to avoid an error here.
+    run(f"code --uninstall-extension {ext_id}", check=False)
+
+    # Uninstalling is not sufficient because vscode sometimes reuses the
+    # uninstalled version when you install a different vsix that shares the
+    # same version number. here we locate the old installed files
+    if os.getenv("VSCODE_EXTENSIONS"):
+        ext_dir = Path(os.environ["VSCODE_EXTENSIONS"])
+    elif os.getenv("VSCODE_PORTABLE"):
+        ext_dir = Path(os.environ["VSCODE_PORTABLE"]) / "extensions"
+    else:
+        ext_dir = Path.home() / ".vscode" / "extensions"
+
+    # delete the old installed version
+    installed = re.compile(rf"{re.escape(ext_id)}-\d", re.I)
+    if ext_dir.is_dir():
+        for p in ext_dir.iterdir():
+            if p.is_dir() and installed.match(p.name):
+                rmtree(p)
+
+    # Uninstalling while VS Code is running marks the version obsolete, and VS
+    # Code would delete the reinstalled copy of that version on next start.
+    obsolete = ext_dir / ".obsolete"
+    if obsolete.exists():
+        entries = json.loads(obsolete.read_text())
+        kept = {k: v for k, v in entries.items() if not installed.match(k)}
+        if kept != entries:
+            obsolete.write_text(json.dumps(kept))
 
 
 def version(args):
@@ -281,10 +332,10 @@ def sub_in_file(path, regex, replacement):
 # ---------- Helpers ----------
 
 
-def run(cmd, cwd=None, **env):
+def run(cmd, cwd=None, check=True, **env):
     print(f"\n\033[34m{cwd if cwd else ''}> {cmd}\033[0m", flush=True)
     try:
-        subprocess.run(cmd, shell=True, cwd=cwd, check=True, env={**os.environ, **env})
+        subprocess.run(cmd, shell=True, cwd=cwd, check=check, env={**os.environ, **env})
     except subprocess.CalledProcessError:
         sys.exit(1)
 

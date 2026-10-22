@@ -16,3 +16,4 @@ obj/
 /venv
 .parcel-cache
 rewrap-*.vsix
+*.pyc
