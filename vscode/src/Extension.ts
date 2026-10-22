@@ -56,7 +56,7 @@ function onSaveDocument (e: vscode.TextDocumentWillSaveEvent) {
   const file = docType (e.document)
     , settings = getCoreSettings (editor, cs => getWrappingColumn(file.path, cs))
     , edit = rewrap (file, settings, [], docLine(e.document))
-    , edits = buildEdits (e.document, edit)
+    , {edits} = buildEdits (e.document, edit)
 
   e.waitUntil(Promise.resolve(edits))
 }

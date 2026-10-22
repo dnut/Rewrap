@@ -14,15 +14,16 @@ export const getDocState = (editor: TextEditor) : DocState => {
   return {filePath: docType(doc).path, version: doc.version, selections}
 }
 
-/** Creates and returns the vscode edits to be applied to the the document. If a
- *  TextEditorEdit is supplied, the edits are applied to it. If saveState is true, also
- *  calculates where the post-wrap selections will be and saves the state of the document.
- *  If the edit is empty this is a no-op */
+/** Creates and returns the vscode edits to be applied to the the document, and where the
+ *  selections will be after they are applied. If a TextEditorEdit is supplied, the edits
+ *  are applied to it. If saveState is true, also saves the state of the document. If the
+ *  edit is empty this is a no-op */
 export function buildEdits
-  (doc: TextDocument, edit: Edit, eb?: vscode.TextEditorEdit, saveState = false) : TextEdit[]
+  (doc: TextDocument, edit: Edit, eb?: vscode.TextEditorEdit, saveState = false)
+  : {edits: TextEdit[], selections: vscode.Selection[]}
 {
   const edits: TextEdit[] = []
-  if (edit.isEmpty) return edits
+  if (edit.isEmpty) return {edits, selections: []}
 
   const oldLines = Array(edit.endLine - edit.startLine + 1).fill(null)
           .map((_, i) => doc.lineAt(edit.startLine + i).text)
@@ -40,7 +41,7 @@ export function buildEdits
   const checkSelPos = (pos: vscode.Position, newOff?: number) => {
     if (pos.line < edit.startLine) return pos
     if (pos.isAfterOrEqual(endPos)) return undefined
-    let off = (newOff || doc.offsetAt(pos)) + offsetDiff - editStartOffset
+    let off = (newOff ?? doc.offsetAt(pos)) + offsetDiff - editStartOffset
     for (let i = 0; i < edit.lines.length; i++) {
       const lineLength = edit.lines[i].length + eol.length
       if (off < lineLength) return new vscode.Position(edit.startLine + i, off)
@@ -104,7 +105,44 @@ export function buildEdits
   if (saveState)
     saveDocState ({filePath: doc.fileName, version: doc.version + 1, selections})
 
-  return edits
+  return {edits, selections}
+}
+
+/** This function applies an edit to the editor, and then explicitly sets the
+ * selections to where they should be after it. Typically, you should not use
+ * this function. It's preferable to just directly use buildEdits instead of
+ * calling this function.
+ * 
+ * ```ts
+ * editor.edit (builder => buildEdits(doc, edit, builder))
+ * ```
+ * 
+ * VS Code moves the selections with the edit by itself just fine, and Rewrap
+ * does not actually need to reset the selection. The problem is that the
+ * VSCodeVim extension then sets the cursor back to a stale position, which is a
+ * bug in VSCodeVim. This function was added as a hack to workaround VSCodeVim's
+ * bug. It is notbe Rewrap's responsibility to come in after the fact and fix
+ * VSCodeVim's mistakes. But we're offering this hack for now as a workaround to
+ * improve the general vscode experience for users of that buggy extension.
+ * 
+ * See https://github.com/dnut/Rewrap/issues/63 for more context.
+ * 
+ * Remove this function if it causes other problems in Rewrap. It's more
+ * important to address those problems than to address VSCodeVim bugs.
+ * 
+ * Remove this function if it no longer provides significant value to users. */
+export async function applyEdit (editor: TextEditor, edit: Edit) {
+  if (edit.isEmpty) return
+  const doc = editor.document
+  let selections: vscode.Selection[] = [], expectedVersion = -1
+  const didEdit = await editor.edit (eb => {
+    expectedVersion = doc.version + 1
+    selections = buildEdits (doc, edit, eb).selections
+  })
+  // Don't touch the selections if anything else has changed in the meantime
+  if (!didEdit || doc.version !== expectedVersion || editor !== vscode.window.activeTextEditor)
+    return
+  editor.selections = selections
 }
 
 /** Catches any error and displays a friendly message to the user. */
