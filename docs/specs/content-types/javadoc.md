@@ -103,6 +103,54 @@ Inline tags are not broken up
      * e           ¦                    * d e         ¦
      */            ¦                    */            ¦
 
+Nor are they changed in lines that aren't wrapped, such as in a table or HTML block
+([#13](https://github.com/dnut/Rewrap/issues/13),
+[#47](https://github.com/dnut/Rewrap/issues/47)).
+
+> language: "java"
+
+    /**                 ¦      ->      /**                 ¦
+     * | x | y |        ¦               * | x | y |        ¦
+     * | -- | -- |      ¦               * | -- | -- |      ¦
+     * | {@link a} | |  ¦               * | {@link a} | |  ¦
+     * a                ¦               * a b              ¦
+     * b                ¦               */                 ¦
+     */                 ¦
+
+    /**                 ¦      ->      /**                 ¦
+     * a                ¦               * a b              ¦
+     * b                ¦               *                  ¦
+     *                  ¦               * <p>{@link a b}   ¦
+     * <p>{@link a b}   ¦               */                 ¦
+     */                 ¦
+
+> language: "c++"
+
+    /**                 ¦      ->      /**                 ¦
+     * a                ¦               * a b              ¦
+     * b                ¦               *                  ¦
+     *                  ¦               * <p>{@link a b}   ¦
+     * <p>{@link a b}   ¦               */                 ¦
+     */                 ¦
+
+> language: "javascript"
+
+    /**                 ¦      ->      /**                 ¦
+     * a                ¦               * a b              ¦
+     * b                ¦               *                  ¦
+     *                  ¦               * <p>{@link a b}   ¦
+     * <p>{@link a b}   ¦               */                 ¦
+     */                 ¦
+
+Or when they end up in a line's prefix, such as in a footnote label
+
+    /**                           ¦      ->      /**                           ¦
+     * [^{@link a}]: text         ¦               * [^{@link a}]: text more    ¦
+     * more                       ¦               */                           ¦
+     */                           ¦
+
+> language: "php"
+
 
 ## Technical details ##
 

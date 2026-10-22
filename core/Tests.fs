@@ -76,6 +76,7 @@ let readTestLines fileName (settings: TestSettings) lines : Result<Test * Option
     let cleanUps = [|
       Regex(" ->(?=\s*$)"), "   "; Regex("-or-"), "    "; Regex("¦"), " "
       Regex("[«»]"), ""; Regex("\s+$"), ""; Regex("·"), " "; Regex("-*→"), "\t"
+      Regex("␀"), "\000"
     |]
     let cleanLine (l: string) =
       cleanUps |> Seq.fold (fun s (reg, rep) -> reg.Replace(s, rep)) l
@@ -266,7 +267,7 @@ let printFailure (test: Test) (actual: Lines) =
   for i = 0 to lineCount - 1 do
     columns
       |> Array.map (fun a -> if i >= a.Length then "" else a.[i])
-      |> Array.map (fun s -> s.Replace(' ', '·'))
+      |> Array.map (fun s -> s.Replace(' ', '·').Replace('\000', '␀'))
       |> Array.map showTabs
       |> print
 

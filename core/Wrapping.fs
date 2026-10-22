@@ -7,8 +7,19 @@ open System
 
 
 let private isWhitespace cc =
-  // \0 is a special placeholder we use ourselves for non-breaking space
+  // NUL is treated as text, so a NUL in the document is never broken at or removed
   cc <> 0x0000us && cc <= 0x0020us || cc = 0x3000us
+
+/// Parsers "freeze" spaces that mustn't be broken at (eg in inline tags) by replacing them with
+/// this placeholder. It's a Unicode noncharacter, reserved for internal use, so it won't be found
+/// in a well-formed document's own text.
+let private frozenSpace = '\uFDD0'
+
+let freezeSpaces (str: string) = str.Replace(' ', frozenSpace)
+
+/// Restores frozen spaces. Must be done for all output lines that may have come through a
+/// parser.
+let unfreezeSpaces (str: string) = str.Replace(frozenSpace, ' ')
 
 
 /// If a char is Chinese or Japanese. These chars can generally be broken between and
@@ -79,7 +90,7 @@ let breakUpString addLine tabWidth maxWidth (str: string) =
         if str[pEnd-1] = '\n' then str.Substring(pStart, pEnd - pStart - 1)
         else str.Substring(pStart, pEnd - pStart).TrimEnd()
       else str.Substring(pStart)
-    addLine (prefix + content.Replace('\000', ' '))
+    addLine (unfreezeSpaces (prefix + content))
     nextPrefixes
 
   /// Iterate through chars of string
@@ -128,7 +139,7 @@ type OutputBuffer(settings : Settings) =
 
   member _.noWrap (lines: Line Nonempty) =
     let consumed, newOutputLines =
-      lines |> Seq.fold (fun (c, ls) l -> (c + 1, (l.prefix + l.content) :: ls)) (0, outputLines)
+      lines |> Seq.fold (fun (c, ls) l -> (c + 1, unfreezeSpaces (l.prefix + l.content) :: ls)) (0, outputLines)
     linesConsumed <- linesConsumed + consumed
     outputLines <- newOutputLines
 

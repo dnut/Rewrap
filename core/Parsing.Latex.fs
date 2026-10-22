@@ -151,7 +151,7 @@ let latex (settings: Settings) : TotalParser<string> =
             let m = Regex(@"[^\\]%").Match(str)
             if not m.Success then str else
             let p = m.Index + 2
-            str.Substring(0, p) + str.Substring(p).Replace(' ', '\000')
+            str.Substring(0, p) + Wrapping.freezeSpaces (str.Substring(p))
         let processChunk =
             (Nonempty.mapTail freezeAnyEOLComment >> firstLineIndentParagraphBlock settings.reformat)
 

@@ -65,7 +65,7 @@ let tabsToSpaces (tabSize: int) (str: string) =
 let charWidth tabSize column charCode =
   match charCode with
     | 0x0009us -> tabSize - (column % tabSize)
-    | 0x0000us -> 1 // We use this as a placeholder for non breaking spaces
+    | 0x0000us -> 1 // Editors such as VS Code show NUL as a visible character
     | x when x < 0x0020us -> 0
     | x when x < 0x2E80us -> 1
     | x when x >= 0x2E80us && x <= 0xD7AFus -> 2

@@ -60,3 +60,19 @@ Unless there was a space after
 
     诶诶诶《 诶诶诶      ->      诶诶诶《 ¦
              ¦                   诶诶诶   ¦
+
+
+## Null characters
+
+A null character (shown here as `␀`) is kept as it is, whether or not its line is
+wrapped.
+
+> language: javascript
+
+    // aaa␀bbb ccc ddd      ->      // aaa␀bbb ¦
+    // eee     ¦                    // ccc ddd ¦
+                                    // eee     ¦
+
+    // aaa     ¦      ->      // aaa bbb ¦
+    // bbb     ¦              s = "a␀b"; ¦
+    s = "a␀b"; ¦

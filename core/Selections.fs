@@ -122,7 +122,7 @@ let rec private processBlocks : Context -> LineRange list -> ParseResult -> unit
     | IsContainer blocks -> blocks |> Seq.iter (processWholeBlock 1 origLines >> ignore)
     | NBlock (nb, lines) -> nb.output context lines
     | Wrap ((f, s), lines) -> output.wrap (f .@ [s], lines)
-    | NoWrap lines -> output.noWrap lines
+    | NoWrap lines -> output.noWrap (map unfreezeSpaces lines)
 
     length, origLines |> Nonempty.splitAt length |> snd
 

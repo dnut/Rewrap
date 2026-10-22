@@ -81,7 +81,7 @@ let private jsdoc : ContentParser -> ContentParser =
   /// "Freezes" inline tags ({@tag }) so that they don't get broken up
   let freezeInlineTags : Line -> Line =
     let rx = regex @"{@[a-z]+.*?[^\\]}"
-    Line.mapContent (fun s -> rx.Replace(s, fun m -> m.Value.Replace(' ', '\000')))
+    Line.mapContent (fun s -> rx.Replace(s, fun m -> Wrapping.freezeSpaces m.Value))
 
   let tryMatchTag : Line -> Option<FirstLineRes> =
     tryMatch' (regex @"^\s*@(\w+)(.*)$") <>>> fun (m, line) ->

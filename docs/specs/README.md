@@ -32,6 +32,8 @@ Tabs are represented by `-→`. Where explicitly needed, spaces are represented 
 (U+00B7). All lines are assumed to have no trailing whitespace unless these characters are
 used.
 
+Null characters are represented by `␀` (U+2400).
+
 ## Settings
 
 Settings for a test are given in a blockquote, on one line, separated by commas and
