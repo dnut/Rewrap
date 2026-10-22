@@ -45,6 +45,15 @@ When absent, the default values are used:
 - language: plaintext
 - wrapWholeComment: true
 - reformat: false
+- path: (none)
+- lineComment: (none)
+- blockComment: (none)
+
+`path` is the file's path, which can be used to detect the language (see [Language
+Detection](features/language-detection.md)). `lineComment` and `blockComment` are the
+comment markers the editor knows for the language, which are used when the language
+isn't recognised. A block comment is given as its start and end markers separated by a
+space, eg `blockComment: "<!-- -->"`.
 
 A new settings block completely replaces the previous one; any absent values are reset
 back to defaults.

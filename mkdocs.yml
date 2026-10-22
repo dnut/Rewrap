@@ -61,6 +61,7 @@ nav:
           - specs/features/tabs.md
           - specs/features/spaces.md
           - specs/features/special-characters.md
+          - specs/features/language-detection.md
           - specs/features/misc.md
       - "Content Types":
           - specs/content-types/dotnet-xmldoc.md

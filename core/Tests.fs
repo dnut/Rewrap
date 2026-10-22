@@ -6,20 +6,21 @@ open Rewrap
 
 /// Rewrap settings that are applied to each test
 type TestSettings =
-  { language: string; column: int; tabWidth: int
+  { language: string; path: string; markers: CustomMarkers; column: int; tabWidth: int
     doubleSentenceSpacing: bool; reformat: bool; wholeComment: bool }
 
 /// Default settings that are applied unless modifications are specified in the
 /// spec file.
 let defaultSettings: TestSettings =
-  { language = "plaintext"; column = 0; tabWidth = 4
+  { language = "plaintext"; path = ""; markers = Core.noCustomMarkers; column = 0; tabWidth = 4
     doubleSentenceSpacing = false; reformat = false; wholeComment = true }
 
 type Lines = string array
 
 /// Data for a test that will be run
 type Test =
-  { fileName: string; settings: Settings; language: string; only: bool
+  { fileName: string; settings: Settings; language: string; path: string
+    markers: CustomMarkers; only: bool
     input: Lines; expected: Lines; selections: Selection array }
 
 type TestErrorType = NoOutput | InvalidWrappingColumn | InvalidSelection
@@ -154,6 +155,7 @@ let readTestLines fileName (settings: TestSettings) lines : Result<Test * Option
   | Ok sels ->
       let mkTest forceReformat expectedLines =
         { fileName = fileName; language = settings.language; only = only
+          path = settings.path; markers = settings.markers
           settings =
             { column = wrappingColumn; tabWidth = settings.tabWidth
               doubleSentenceSpacing = settings.doubleSentenceSpacing
@@ -174,8 +176,16 @@ let readSamplesInFile (fileName: string) : Result<Test * Option<Test>,TestError>
       let p = s.Split(':') |> Array.map (fun s -> s.Trim()) in p.[0], p.[1]
     let map = pairs |> Seq.map splitPair |> Map.ofSeq
     let pick k fn def = Map.tryFind k map |> maybe def fn
+    let str (s: string) = s.Trim('"')
+    // The markers an editor would supply for the language. A block comment is given as
+    // the start and end markers separated by a space.
+    let markers =
+      { line = pick "lineComment" str ""
+        block = pick "blockComment" (str >> fun s -> let p = s.Split(' ') in p.[0], p.[1]) ("", "") }
     {
-      language = pick "language" (fun (s: string) -> s.Trim('"')) defaultSettings.language
+      language = pick "language" str defaultSettings.language
+      path = pick "path" str defaultSettings.path
+      markers = markers
       column = defaultSettings.column
       tabWidth = pick "tabWidth" Int32.Parse defaultSettings.tabWidth
       doubleSentenceSpacing = pick "doubleSentenceSpacing" bool.Parse defaultSettings.doubleSentenceSpacing
@@ -263,7 +273,7 @@ let printFailure (test: Test) (actual: Lines) =
 /// Runs a test
 let runTest (test: Test) =
   let getLine = Func<int,string>(fun i -> if i < test.input.Length then test.input.[i] else null)
-  let file = {language = test.language; path = ""; getMarkers = Func<CustomMarkers>(fun () -> Core.noCustomMarkers)}
+  let file = {language = test.language; path = test.path; getMarkers = Func<CustomMarkers>(fun () -> test.markers)}
   let edit = Core.rewrap file test.settings test.selections getLine
   let actual = applyEdit edit test.input
   let arrayEqual (a: 'a[]) (b: 'a[]) = (a.Length = b.Length && not (Seq.exists2 (fun x y -> x <> y) a b))
