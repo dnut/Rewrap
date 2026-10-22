@@ -242,13 +242,19 @@ let private maybeAddCustomLanguage name (markers: CustomMarkers) : Option<Langua
 /// Done in this way so that if the language of the file isn't found, we get a
 /// chance to try the files getMarkers callback instead. Otherwise, it mught
 /// just match the file to the wrong language based on the extension (eg
-/// Prolog/Perl .pl)
+/// Prolog/Perl .pl). The exception is Markdown: editors give some kinds of
+/// Markdown file their own language ID (eg "prompt" for .prompt.md in VS Code),
+/// so a file with an unrecognised language ID and a Markdown extension is
+/// treated as Markdown.
 /// </remarks>
 let languageForFile (file: File) : Option<Language> =
     let l = file.language.ToLower()
-    if not (String.IsNullOrWhiteSpace(l) || l.Equals("plaintext")) then
-        Seq.tryFind (Language.matchesFileLanguage l) languages
-    else Seq.tryFind (Language.matchesFilePath file.path) languages
+    let byPath () = Seq.tryFind (Language.matchesFilePath file.path) languages
+    if String.IsNullOrWhiteSpace(l) || l.Equals("plaintext") then byPath ()
+    else
+      Seq.tryFind (Language.matchesFileLanguage l) languages
+        |> Option.orElseWith (fun () ->
+            byPath () |> Option.filter (fun lang -> Language.name lang = "Markdown"))
 
 /// <summary> Selects a parser for the given File. </summary>
 /// <remarks>
