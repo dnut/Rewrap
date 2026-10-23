@@ -265,13 +265,17 @@ def build_vscode(args):
             popen("npx --silent tsc -w -p vscode --noEmit"),
             popen(f"npx --silent parcel watch vscode {parcel_opts}"),
         ]
-    if not outdated(VSCODE_MAIN, "vscode/src", "core"):
+    # The output doesn't record whether it was a dev or release build, so always rebuild
+    # for a release. Parcel's cache keeps this quick.
+    if not args.release and not outdated(VSCODE_MAIN, "vscode/src", "core"):
         return []
     npx(args, "tsc -p vscode --noEmit")
     if args.release:
         npx(args, "eslint vscode --ext .ts")
         npx(args, f"parcel build vscode --no-source-maps {parcel_opts}")
-        unlink(VSCODE_MAIN + ".map")
+        # Remove source maps left over from a dev build, so they aren't packaged
+        for p in Path("vscode/dist").glob("*.map"):
+            unlink(p)
     else:
         npx(args, f"parcel build vscode --no-optimize {parcel_opts}")
     return []

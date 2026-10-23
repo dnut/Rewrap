@@ -1,5 +1,35 @@
 See also [https://github.com/dnut/rewrap/releases](https://github.com/dnut/rewrap/releases) (for working links to issues)
 
+# 18.3.0
+
+Features:
+- Treat Quarto and R Markdown documents as Markdown (#40, #54)
+- Treat `.md` files with unrecognised language IDs, such as Copilot prompt and
+  instructions files, as Markdown (#46)
+
+Fixes:
+- Don't repeat the opening marker (eg `"""` in Python docstrings) when the first
+  line of a block comment wraps (#10, #22)
+- JSDoc/Javadoc: Don't insert NUL characters into inline tags such as `{@link}`
+  in lines that aren't wrapped, like table rows. NUL characters already in a
+  document are now kept as they are (#13, #47) 
+- JSDoc: Start a new paragraph at every tag when several tags follow each other
+  (#27)
+- VS Code: Keep the cursor after the wrapped text when auto-wrapping with
+  VSCodeVim (#63)
+- VS Code: Support the object form of `lineComment` in custom language
+  configurations (#58)
+
+Maintenance: 
+- Update json5 to 2.2.3 (CVE-2022-46175) (#53)
+- Add `install` and `uninstall` commands to `./do`.
+- Fix `./do` builds bundling an outdated copy of core into the VS Code
+  extension.
+- Let specs set the file path and editor comment markers, and write null
+  characters as `␀`.
+- Deploy the docs site automatically from master.
+- Minify the VS Code extension, making the package about 60% smaller.
+
 # 18.1.0
 
 Promote pre-release 17.10.0 to a stable release. Relative to the prior stable release (1.16.3), this includes all changes from 17.x.x pre-release versions.

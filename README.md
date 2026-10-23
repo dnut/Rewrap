@@ -4,11 +4,12 @@ GitHub. For GitHub we can't get rid of the border on the td nor make the font sm
 we want-->
 <table class="topright" align="right" style="font-size:90%;width:auto;margin:0;border:none">
 <tr style="border:none"><td align="right" style="border:none">
+<div class="hideOnDocsSite"><b><a href="https://dnut.github.io/Rewrap">Read the Docs</a></b><br/></div>
 For <a href="https://marketplace.visualstudio.com/items?itemName=dnut.rewrap-revived"><b>VS Code</b></a>,
 <a href="https://open-vsx.org/extension/dnut/rewrap-revived"><b>Open VSX</b></a> and
 <a href="https://marketplace.visualstudio.com/items?itemName=stkb.Rewrap-18980">
   <b>Visual Studio</b></a>.<br/>
-Latest stable version <b>18.1.0</b> / pre-release <b>18.1.0</b> /
+Latest stable version <b>18.3.0</b> / pre-release <b>18.3.0</b> /
 <a href="https://github.com/dnut/rewrap/releases">changelog</a>
 </td></tr></table>
 

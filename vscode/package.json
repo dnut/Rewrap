@@ -12,7 +12,7 @@
     "paragraph",
     "multi-root ready"
   ],
-  "version": "18.1.0",
+  "version": "18.3.0",
   "publisher": "dnut",
   "icon": "logo.png",
   "repository": {
@@ -137,6 +137,7 @@
     "main": {
       "source": "src/Extension.node.ts",
       "context": "node",
+      "optimize": true,
       "includeNodeModules": {
         "vscode": false
       }
@@ -144,6 +145,7 @@
     "browser": {
       "source": "src/Extension.browser.ts",
       "context": "browser",
+      "optimize": true,
       "includeNodeModules": {
         "vscode": false
       }
