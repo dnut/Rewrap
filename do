@@ -82,13 +82,16 @@ def parse_args():
 
 def clean(args):
     if args.core:
-        for d in (CACHE_DIR, "core/dist"):
+        for d in (f"{CACHE_DIR}/.net", f"{CACHE_DIR}/parcel", "core/dist"):
             rmtree(d)
         for f in (CORE_TEST_PROD, CORE_TEST_PROD + ".map"):
             unlink(f)
     if args.vscode:
-        for d in ("vscode/dist", "vscode/node_modules", "node_modules", ".vscode-test"):
+        for d in ("vscode/dist", "vscode/node_modules", "node_modules", 
+                  ".vscode-test", ".cache/vscode-test"):
             rmtree(d)
+    if args.core and args.vscode:
+        rmtree(CACHE_DIR) # redundant, defensive, in case above paths are not comprehensive
 
 
 def build(args):

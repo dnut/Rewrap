@@ -3,15 +3,16 @@ const { downloadAndUnzipVSCode, runTests } = require('@vscode/test-electron')
 
 async function main() {
   try {
-    const cachePath = resolve(__dirname, '../../dist/vscode-test')
+    const cachePath = resolve(__dirname, '../../.cache/vscode-test')
     const extensionDevelopmentPath = resolve(__dirname, '..')
     const extensionTestsPath = resolve(__dirname, 'tests.cjs')
     const workspace = resolve(__dirname, 'fixture')
     const extensionsDir = resolve(__dirname, 'fixture/extensions')
+    const userDataDir = resolve(__dirname, '../../.cache/vscode-test/user-data')
     // --disable-extensions cannot be used because the fixture extension must
     // load. this means built-in extensions will also be loaded, but that should
     // be fine.
-    const launchArgs = [workspace, '--extensions-dir', extensionsDir, '--disable-gpu']
+    const launchArgs = [workspace, '--extensions-dir', extensionsDir, '--user-data-dir', userDataDir, '--disable-gpu']
 
     // Use the given VS Code (the nix dev shell provides one on Linux), or download
     // it manually so we can choose the location
