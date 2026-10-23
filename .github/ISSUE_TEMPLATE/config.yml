@@ -1,0 +1,10 @@
+blank_issues_enabled: false
+
+contact_links:
+  - name: Feature Request
+    url: https://github.com/dnut/Rewrap/discussions/new?category=ideas
+    about: Suggest improvements or new features.
+
+  - name: Questions
+    url: https://github.com/dnut/Rewrap/discussions/new?category=q-a
+    about: Ask a question.

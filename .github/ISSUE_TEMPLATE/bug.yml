@@ -1,0 +1,85 @@
+name: Bug report
+description: Report something that isn't working correctly.
+title: "[Bug] "
+labels: ["bug"]
+
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Rewrap Revived Version
+      placeholder: e.g. 18.3.0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: ide
+    attributes:
+      label: IDE
+      options:
+        - Visual Studio Code
+        - Visual Studio
+        - Code - OSS
+        - Other (describe below)
+    validations:
+      required: true
+
+  - type: textarea
+    id: ide-version
+    attributes:
+      label: IDE Version
+      description: Go to Help > About and then click Copy
+      placeholder: |
+        Version:
+        Commit:
+        Date:
+        Electron:
+        ElectronBuildId:
+        Chromium:
+        Node.js:
+        V8:
+        OS:
+    validations:
+      required: true
+
+  - type: textarea
+    id: extensions
+    attributes:
+      label: Installed Extensions
+      description: code --list-extensions --show-versions
+    validations:
+      required: true
+
+  - type: input
+    id: lang
+    attributes:
+      label: Language where the bug occurred (if applicable)
+      placeholder: e.g. Python
+    validations:
+      required: false
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or screenshots
+      description: Optional supporting evidence.
+    validations:
+      required: false
