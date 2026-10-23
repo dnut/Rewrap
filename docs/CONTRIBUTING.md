@@ -39,14 +39,14 @@ a comprehensive list. These are the most important ones:
 All development operations go through `./do`. Run `./do --help`
 or `./do <subcommand> --help` for usage.
 
-| Command                | Description                                        |
-| ---------------------- | -------------------------------------------------- |
-| `./do clean`           | Remove build artifacts                             |
-| `./do build`           | Development build (Fable + Parcel)                 |
-| `./do test`            | Build then run core + VSCode tests                 |
-| `./do package`         | Production build, create `.obj/Rewrap-VSCode.vsix` |
-| `./do publish`         | Production build, publish to VS Code Marketplace   |
-| `./do version [X.Y.Z]` | Print or set the version across project files      |
+| Command                | Description                                            |
+| ---------------------- | ------------------------------------------------------ |
+| `./do clean`           | Remove build artifacts                                 |
+| `./do build`           | Development build (Fable + Parcel)                     |
+| `./do test`            | Build then run core + VSCode tests                     |
+| `./do package`         | Production build, create `dist/rewrap-revived-\*.vsix` |
+| `./do publish`         | Production build, publish to VS Code Marketplace       |
+| `./do version [X.Y.Z]` | Print or set the version across project files          |
 
 **Flags** (apply to `build` and `test`):
 
@@ -198,7 +198,7 @@ pick them up.
 ./do package
 ```
 
-Runs a production build and outputs `.obj/Rewrap-VSCode.vsix`.
+Runs a production build and outputs `dist/Rewrap-VSCode.vsix`.
 
 ### Publish to the Marketplace
 

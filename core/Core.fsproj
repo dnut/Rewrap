@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Rewrap.Core</AssemblyName>
-    <BaseIntermediateOutputPath>..\.obj\.net\core</BaseIntermediateOutputPath>
-    <BaseOutputPath>..\.obj\.net\core\bin</BaseOutputPath>
+    <BaseIntermediateOutputPath>..\.cache\.net\core</BaseIntermediateOutputPath>
+    <BaseOutputPath>..\.cache\.net\core\bin</BaseOutputPath>
   </PropertyGroup>
 
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />

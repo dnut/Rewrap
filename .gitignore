@@ -2,7 +2,7 @@
 *.csproj.user
 /.ionide/
 /.vscode-test/
-/.obj/
+/.cache/
 /dist/
 
 /node_modules/

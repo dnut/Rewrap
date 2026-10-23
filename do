@@ -19,7 +19,7 @@ CORE_TEST_PROD = "core/test/prod.js"
 CORE_TEST_DEV = "core/dist/dev/Tests.js"
 CORE_PROD = "core/dist/index.js"
 VSCODE_MAIN = "vscode/dist/Extension.node.js"
-CACHE_DIR = ".obj"
+CACHE_DIR = ".cache"
 DIST_DIR = "dist"
 VSIX = f"{DIST_DIR}/rewrap-revived-{{version}}.vsix"
 
