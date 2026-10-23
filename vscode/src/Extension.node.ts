@@ -8,3 +8,4 @@ import {platform} from './Platform'
 platform.readFile = path => readFileSync(path, 'utf-8')
 
 export {activate, getCoreSettings, getEditorSettings} from './Extension'
+export {buildEdits} from './Common'

@@ -25,10 +25,14 @@ export function buildEdits
   const edits: TextEdit[] = []
   if (edit.isEmpty) return {edits, selections: []}
 
+  // Selections are processed in document order, but they may be given in a different
+  // order (the primary selection comes first). They are returned in the original order.
+  const order = edit.selections.map((_, i) => i)
+    .sort((a, b) => edit.selections[a].start.compareTo(edit.selections[b].start))
   const oldLines = Array(edit.endLine - edit.startLine + 1).fill(null)
           .map((_, i) => doc.lineAt(edit.startLine + i).text)
-    , oldSelections = [...edit.selections].reverse()
-    , selections: vscode.Selection[] = []
+    , oldSelections = order.map(i => edit.selections[i]).reverse()
+    , sortedSelections: vscode.Selection[] = []
   let sel = oldSelections.pop()
 
   const eol = doc.eol === vscode.EndOfLine.CRLF ? "\r\n" : "\n"
@@ -65,7 +69,7 @@ export function buildEdits
       if (!newAnchorPos) newAnchorPos = checkSelPos(sel.anchor, newOffset)
       if (!newActivePos) newActivePos = checkSelPos(sel.active, newOffset)
       if (newAnchorPos && newActivePos) {
-        selections.push (new vscode.Selection (newAnchorPos, newActivePos))
+        sortedSelections.push (new vscode.Selection (newAnchorPos, newActivePos))
         newAnchorPos = newActivePos = undefined
         sel = oldSelections.pop ()
       }
@@ -92,13 +96,16 @@ export function buildEdits
   // Finish off selections after the edit
   const lineDelta = edit.lines.length - (edit.endLine - edit.startLine + 1)
   while (sel) {
-    selections.push (new vscode.Selection (
+    sortedSelections.push (new vscode.Selection (
       newAnchorPos || sel.anchor.translate (lineDelta),
       newActivePos || sel.active.translate (lineDelta)
     ))
     newAnchorPos = newActivePos = undefined
     sel = oldSelections.pop ()
   }
+
+  const selections: vscode.Selection[] = []
+  order.forEach((origIndex, i) => selections[origIndex] = sortedSelections[i])
 
   if (eb)
     edits.forEach(e => e.newText ? eb.insert (e.range.start, e.newText) : eb.delete (e.range))

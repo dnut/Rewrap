@@ -297,8 +297,15 @@ let main argv =
           if t.settings.reformat then acc // Skip reformat tests
           elif runTest t then { acc with passes = acc.passes + 1 }
           else { acc with failures = acc.failures + 1 }
+        // Editors don't always give multiple selections in document order (eg in VS Code
+        // the primary selection comes first), so tests with multiple selections are also
+        // run with them in reverse.
+        let runAlsoReversed (acc: Results) (t: Test) =
+          let acc = run acc t
+          if t.selections.Length < 2 then acc
+          else run acc { t with selections = Array.rev t.selections }
 
-        Option.fold run (run acc test) maybeReformatTest
+        Option.fold runAlsoReversed (runAlsoReversed acc test) maybeReformatTest
 
     | Error (fileName, lines, err) ->
         eprintfn "\nError: %A, %s" err (prettyFileName fileName)

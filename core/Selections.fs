@@ -201,9 +201,18 @@ let private trimEdit (originalLines: Nonempty<string>) (edit : Edit) : Edit =
 let wrapSelected : Nonempty<string> -> Selection seq -> Context -> Edit =
   fun originalLines selections context ->
 
+  // Selections aren't necessarily in document order (eg in VS Code the primary selection
+  // comes first), but normalizeRanges requires that.
+  let selStart (s: Selection) =
+    if s.anchor.line < s.active.line
+      || (s.anchor.line = s.active.line && s.anchor.character <= s.active.character)
+    then s.anchor.line, s.anchor.character
+    else s.active.line, s.active.character
   let selectionRanges =
     if Seq.isEmpty selections then [LineRange.toInfinity 0]
-    else selections |> Seq.map LineRange.fromSelection |> List.ofSeq |> normalizeRanges
+    else
+      selections |> Seq.sortBy selStart |> Seq.map LineRange.fromSelection
+        |> List.ofSeq |> normalizeRanges
   let parseResult =
     {startLine = 0; originalLines = originalLines; blocks = context.getBlocks()}
   processBlocks context selectionRanges parseResult

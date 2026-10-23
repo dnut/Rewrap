@@ -4,6 +4,7 @@
 /node_modules/
 /vscode/node_modules/
 /core/dist/
+/core/test/prod.js*
 /vscode/dist/
 /vscode/README.md
 /vs/obj/
