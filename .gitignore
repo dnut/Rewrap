@@ -1,20 +1,16 @@
-/.vs/
-*.csproj.user
-/.ionide/
-/.vscode-test/
+# Build outputs
 /.cache/
 /dist/
-
 /node_modules/
 /vscode/node_modules/
-
 /core/dist/
-/core/test/prod.js*
 /vscode/dist/
 /vscode/README.md
-bin/
-obj/
-/venv
-.parcel-cache
-rewrap-*.vsix
+/vs/obj/
+/vscode/.parcel-cache
 *.pyc
+
+# Personal IDE configuration
+/.direnv
+/.envrc
+/.vscode/settings.json
