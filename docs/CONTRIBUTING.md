@@ -17,12 +17,12 @@ nix develop
 Alternatively, you can install all the dependencies manually. See flake.nix for
 a comprehensive list. These are the most important ones:
 
-| Tool     | Version                           | Notes                                            |
-| -------- | --------------------------------- | ------------------------------------------------ |
-| .NET SDK | 6.0                               | Required for Fable 3.6.2. SDK 8.0 does not work. |
-| Node.js  | 18+ recommended (tested up to 25) |                                                  |
-| npm      | Included with Node.js             |                                                  |
-| Python   | 3.8+                              | Runs the build script                            |
+| Tool     | Version               | Notes                 |
+| -------- | --------------------- | --------------------- |
+| .NET SDK | 10.0+                 | Required for Fable 5  |
+| Node.js  | 24.11+ (26 in Nix)    | Required for Babel 8  |
+| npm      | Included with Node.js |                       |
+| Python   | 3.8+                  | Runs the build script |
 
 ## Project Structure
 

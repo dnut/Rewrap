@@ -1,5 +1,5 @@
 import {getWrappingColumn, maybeAutoWrap} from './Core'
-import {Memento, ThemeColor, workspace, window, TextDocumentChangeEvent, TextEditor, ConfigurationChangeEvent} from 'vscode'
+import {Memento, StatusBarAlignment, ThemeColor, workspace, window, TextDocumentChangeEvent, TextEditor, ConfigurationChangeEvent} from 'vscode'
 import {applyEdit, catchErr, docLine, docType} from './Common'
 import {EditorSettings, getCoreSettings, getEditorSettings} from './Settings'
 
@@ -39,7 +39,7 @@ const checkChange = async (e: TextDocumentChangeEvent) => {
 
 /** Notification that shows autowrap status in status bar */
 namespace Notification {
-  const sbItem = window.createStatusBarItem(0, 101)
+  const sbItem = window.createStatusBarItem(StatusBarAlignment.Right, 101)
   const defaultColor = new ThemeColor('statusBar.foreground')
   let timeout // Used for the text notification that hides after a few secs
 

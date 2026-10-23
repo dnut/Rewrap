@@ -79,7 +79,7 @@ let private htmlType1To6 : TryNewParser =
       "<!--", "-->"
       "<\\?", "\\?>"
       "<![A-Z]", ">"
-      "<!\\[CDATA\\[", "]]>"
+      "<!\\[CDATA\\[", "\\]\\]>"
       "</?(address|article|aside|base|basefont|blockquote"
         + "|body|caption|center|col|colgroup|dd|details"
         + "|dialog|dir|div|dl|dt|fieldset|figcaption|figure"

@@ -3,6 +3,7 @@
 /.ionide/
 /.vscode-test/
 /.obj/
+/dist/
 
 /node_modules/
 /vscode/node_modules/

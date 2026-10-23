@@ -13,8 +13,10 @@ async function main() {
     // be fine.
     const launchArgs = [workspace, '--extensions-dir', extensionsDir, '--disable-gpu']
 
-    // Download manually so we can choose the location
-    vscodeExecutablePath = await downloadAndUnzipVSCode({cachePath})
+    // Use the given VS Code (the nix dev shell provides one on Linux), or download
+    // it manually so we can choose the location
+    const vscodeExecutablePath =
+      process.env.VSCODE_TEST_EXECUTABLE || await downloadAndUnzipVSCode({cachePath})
 
     // Run the integration tests
     await runTests({extensionDevelopmentPath, extensionTestsPath, launchArgs, reuseMachineInstall: false, vscodeExecutablePath})

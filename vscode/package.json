@@ -127,10 +127,8 @@
     ]
   },
   "devDependencies": {
-    "fast-diff": "^1.2.0",
-    "json5": "^2.2.3",
-    "localtunnel": "^2.0.2",
-    "serve": "^13.0.2"
+    "fast-diff": "^1.3.0",
+    "json5": "^2.2.3"
   },
   "source": "src/Extension.ts",
   "targets": {

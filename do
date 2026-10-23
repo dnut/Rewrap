@@ -10,6 +10,7 @@ import re
 import shutil
 import subprocess
 import sys
+import time
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -18,7 +19,9 @@ CORE_TEST_PROD = "core/test/prod.js"
 CORE_TEST_DEV = "core/dist/dev/Tests.js"
 CORE_PROD = "core/dist/index.js"
 VSCODE_MAIN = "vscode/dist/Extension.node.js"
-VSIX = ".obj/rewrap-revived-{version}.vsix"
+CACHE_DIR = ".obj"
+DIST_DIR = "dist"
+VSIX = f"{DIST_DIR}/rewrap-revived-{{version}}.vsix"
 
 
 def main():
@@ -79,12 +82,12 @@ def parse_args():
 
 def clean(args):
     if args.core:
-        for d in (".obj/.net/core/bin", "core/dist"):
+        for d in (CACHE_DIR, "core/dist"):
             rmtree(d)
         for f in (CORE_TEST_PROD, CORE_TEST_PROD + ".map"):
             unlink(f)
     if args.vscode:
-        for d in ("vscode/dist", "vscode/node_modules"):
+        for d in ("vscode/dist", "vscode/node_modules", "node_modules", ".vscode-test"):
             rmtree(d)
 
 
@@ -110,7 +113,7 @@ def test(args):
         return
     if args.core:
         if args.release and outdated(CORE_TEST_PROD, CORE_TEST_DEV):
-            npx(args, "parcel build core/test --cache-dir .obj/parcel")
+            npx(args, f"parcel build core/test --cache-dir {CACHE_DIR}/parcel")
         run(f"node core/test{'/prod' if args.release else ''}")
     if args.vscode:
         if shutil.which("xvfb-run"):
@@ -143,6 +146,7 @@ def package(args):
     pre = "" if version.is_stable() else "--pre-release"
     path = VSIX.format(version=version)
 
+    os.makedirs(f"{DIST_DIR}", exist_ok=True)
     npx(args, f"vsce package {pre} -o ../{path}", cwd="vscode")
     print(f"VSIX created at {path}", flush=True)
 
@@ -239,8 +243,8 @@ def release_notes(args):
 
 
 def build_core(args):
-    if not Path(".obj/.net/core/project.assets.json").exists():
-        run("dotnet tool restore")
+    run("dotnet tool restore")
+    if not Path(f"{CACHE_DIR}/.net/core/project.assets.json").exists():
         run("dotnet restore core/Core.Test.fsproj")
     fable = "core/Core.Test.fsproj -o core/dist/dev"
     if args.watch:
@@ -248,7 +252,7 @@ def build_core(args):
     if outdated(CORE_TEST_DEV, "core"):
         run(f"dotnet fable {fable}")
     if args.release and outdated(CORE_PROD, "core"):
-        npx(args, "parcel build core --cache-dir .obj/parcel")
+        npx(args, f"parcel build core --cache-dir {CACHE_DIR}/parcel")
     return []
 
 
@@ -259,7 +263,7 @@ def build_vscode(args):
         run("npm install")
     # vscode has its own lockfile, so by default parcel only watches vscode/ for changes
     # and keeps reusing its cached copy of core/dist. Watch the whole repo instead.
-    parcel_opts = "--cache-dir .obj/parcel --watch-dir ."
+    parcel_opts = f"--cache-dir {CACHE_DIR}/parcel --watch-dir ."
     if args.watch:
         return [
             popen("npx --silent tsc -w -p vscode --noEmit"),
@@ -270,8 +274,8 @@ def build_vscode(args):
     if not args.release and not outdated(VSCODE_MAIN, "vscode/src", "core"):
         return []
     npx(args, "tsc -p vscode --noEmit")
+    npx(args, 'eslint "vscode/**/*.ts"')
     if args.release:
-        npx(args, "eslint vscode --ext .ts")
         npx(args, f"parcel build vscode --no-source-maps {parcel_opts}")
         # Remove source maps left over from a dev build, so they aren't packaged
         for p in Path("vscode/dist").glob("*.map"):
@@ -341,14 +345,17 @@ def sub_in_file(path, regex, replacement):
 
 def run(cmd, cwd=None, check=True, **env):
     print(f"\n\033[34m{cwd if cwd else ''}> {cmd}\033[0m", flush=True)
+    started = time.perf_counter()
     try:
         subprocess.run(cmd, shell=True, cwd=cwd, check=check, env={**os.environ, **env})
     except subprocess.CalledProcessError:
         sys.exit(1)
+    finally:
+        print(f"\033[90m...finished in {time.perf_counter() - started:.2f}s [{cmd}]\033[0m", flush=True)
 
 
 def npx(args, cmd, cwd=None):
-    run("npx --silent " + cmd, cwd=cwd)
+    run("npx --yes --silent " + cmd, cwd=cwd)
 
 
 def popen(cmd, cwd=None):

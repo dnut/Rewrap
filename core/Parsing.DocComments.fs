@@ -46,7 +46,7 @@ let javadoc =
   let tagRegex = Regex(@"^\s*@(\w+)(.*)$")
 
   /// "Freezes" inline tags ({@tag }) so that they don't get broken up
-  let inlineTagRegex = Regex(@"{@[a-z]+.*?[^\\]}", RegexOptions.IgnoreCase)
+  let inlineTagRegex = Regex(@"\{@[a-z]+.*?[^\\]\}", RegexOptions.IgnoreCase)
   let markdownWithInlineTags settings =
     let replaceSpace (m: Match) = Wrapping.freezeSpaces m.Value
     map (fun s -> inlineTagRegex.Replace(s, replaceSpace)) >> markdown settings

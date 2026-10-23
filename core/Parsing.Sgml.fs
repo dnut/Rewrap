@@ -32,7 +32,7 @@ let sgml
           contentParser ctx (Seq.map (fun (l: string) -> Line("", l)) lines)
           ctx.getBlocks ()
 
-        let afterFirstLine _ lines =
+        let afterFirstLine _ (lines: Nonempty<string>) =
             let (Nonempty(lastLine, initLinesRev)) = Nonempty.rev lines
             if (snd markers).IsMatch(lastLine) then
                 match Nonempty.fromList (List.rev initLinesRev) with

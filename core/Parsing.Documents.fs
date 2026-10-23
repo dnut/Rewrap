@@ -126,7 +126,7 @@ let mutable languages = [
         block' ("*"," * ") javadocMarkers dartdoc_markdown; cBlock ]
     lang "Dockerfile" "docker" "dockerfile" <| configFile
     lang "Elixir" "" ".ex|.exs" <| sc [line "#"; block ("@(?:module|type|)doc\s+\"\"\"", "\"\"\"")]
-    lang "Elm" "" ".elm" <| sc [line "--"; block ("{-\|?", "-}")]
+    lang "Elm" "" ".elm" <| sc [line "--"; block ("\{-\|?", "-\}")]
     lang "Emacs Lisp" "elisp|emacslisp" ".el" <| sc [line ";+"]
     lang "F#" "fsharp" ".fs|.fsx"
         ( oldSourceCode
@@ -139,8 +139,8 @@ let mutable languages = [
     lang "Git commit" "git-commit" "tag_editmsg" <| docOf markdown
     lang "GraphQL" "" ".graphql|.gql" <| sc [line "#"; block (@".*?""""""", "\"\"\"")]
     lang "Groovy" "" ".groovy" java
-    lang "Handlebars" "" ".handlebars|.hbs" <| sc [block ("{{!--", "--}}"); block ("{{!", "}}"); block ("<!--", "-->")]
-    lang "Haskell" "" ".hs" <| sc [line "--"; block ("{-\s*\|?", "-}")]
+    lang "Handlebars" "" ".handlebars|.hbs" <| sc [block ("\{\{!--", "--\}\}"); block ("\{\{!", "\}\}"); block ("<!--", "-->")]
+    lang "Haskell" "" ".hs" <| sc [line "--"; block ("\{-\s*\|?", "-\}")]
     lang "HCL" "terraform" ".hcl|.tf" <| sc [ jsDocBlock; cBlock; line' "//[/!]" jsdoc_markdown; line @"(?://|#)" ]
     lang "HTML" "erb|htmlx|svelte|vue" ".htm|.html|.svelte|.vue"
         html
@@ -182,7 +182,7 @@ let mutable languages = [
     // Treat blocks with and without leading pipes as separate blocks, otherwise pipes
     // will be added to those without, possibly adding those lines to documentation where
     // it wasn't intended.
-    lang "PureScript" "" ".purs" <| sc [line "--\s*\|"; line "--"; block ("{-\s*\|?", "-}")]
+    lang "PureScript" "" ".purs" <| sc [line "--\s*\|"; line "--"; block ("\{-\s*\|?", "-\}")]
     lang "Python" "" ".py" <| sc [line "#"; block' ("","") (@"(.*?)""""""", "\"\"\"") rst; block' ("","") (@"(.*?)'''", "'''") rst]
     lang "R" "" ".r" <| sc [line "#'?"]
     lang "reStructuredText" "rst" ".rst|.rest" <| docOf rst
@@ -194,7 +194,7 @@ let mutable languages = [
     lang "Scala" "" ".scala" java
     lang "Scheme" "" ".scm|.ss|.sch|.rkt" <| sc [line ";+"; block (@"#\|", @"\|#")]
     lang "Shaderlab" "" ".shader" java
-    lang "Shell script" "shellscript" ".sh" <| sc [line @"#(?!\!)"]
+    lang "Shell script" "shellscript" ".sh" <| sc [line @"#(?!!)"]
     lang "SQL" "postgres" ".pgsql|.psql|.sql" <| sc [line "--"; cBlock]
     lang "Swift" "" ".swift" java
     lang "Tcl" "" ".tcl" <| configFile

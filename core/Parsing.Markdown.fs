@@ -80,7 +80,7 @@ let rec markdown (settings: Settings): TotalParser<string> =
             takeLinesBetweenMarkers (mdMarker "<!--", Regex("-->"))
             takeLinesBetweenMarkers (mdMarker "<\\?", Regex("\\?>"))
             takeLinesBetweenMarkers (mdMarker "<![A-Z]", Regex(">"))
-            takeLinesBetweenMarkers (mdMarker "<!\\[CDATA\\[", Regex("]]>"))
+            takeLinesBetweenMarkers (mdMarker "<!\\[CDATA\\[", Regex("\\]\\]>"))
             takeLinesBetweenMarkers
                 ( mdMarker
                     ("</?(address|article|aside|base|basefont|blockquote"

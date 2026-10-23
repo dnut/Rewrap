@@ -7,10 +7,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check-out Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7.0.1
 
       - name: Setup Nix
-        uses: cachix/install-nix-action@v27
+        uses: cachix/install-nix-action@31.11.3
 
       - name: Build & Run Tests
         run: nix develop -c ./do test --release

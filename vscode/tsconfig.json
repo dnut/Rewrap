@@ -5,9 +5,11 @@
 		"esModuleInterop": true,
 		"target": "es2019",
 		"lib": ["ES2019"],
+		"types": ["node"],
 		"outDir": "bin",
 		"sourceMap": true,
 		"alwaysStrict": true,
+		"strict": false,
 		"strictNullChecks": true
 	}
 }
