@@ -13,6 +13,16 @@
         "aliases": ["Rewrap Test Custom"],
         "extensions": [".rewrap-test"],
         "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "rewrap-test-custom-object",
+        "aliases": [
+          "Rewrap Test Custom (lineComment object)"
+        ],
+        "extensions": [
+          ".rewrap-test-object"
+        ],
+        "configuration": "./language-configuration-object.json"
       }
     ]
   }

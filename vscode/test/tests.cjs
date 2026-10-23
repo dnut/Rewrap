@@ -98,4 +98,7 @@ exports.run = async () => {
 
   // Auto-wrap tests
   await testAutoWrapCursorWithVimStyleTyping()
+  
+  // lineComment can also be an object (#58)
+  await testWrapping ("rewrap-test-custom-object", "# a\n# b", "# a b")
 }

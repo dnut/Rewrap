@@ -4,14 +4,16 @@ import {CustomMarkers, noCustomMarkers} from './Core'
 import {platform} from './Platform'
 
 const getConfig = (getText, path) => {
-  let config = {line: null, block: null}
+  const config: {line: string | null, block: string[] | null} = {line: null, block: null}
   let warnings: string[] = [], error
   try {
     const c = JSON.parse(getText(path)).comments
     if (c) {
-      // 'line' must be a string or null.
-      if (typeof c.lineComment === 'string') config.line = c.lineComment
-      else warnings.push("lineComment not a string.")
+      // 'line' must be a string, an object with a 'comment' string, or null.
+      const line = c.lineComment
+      if (typeof line === 'string') config.line = line
+      else if (line && typeof line.comment === 'string') config.line = line.comment
+      else warnings.push("lineComment not a string or {comment: string} object.")
       // 'block' must be an array of 2 strings or null.
       if (Array.isArray(c.blockComment) && c.blockComment.length > 1)
         config.block = c.blockComment.slice(0, 2)
