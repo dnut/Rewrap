@@ -1,4 +1,4 @@
-import {getWrappingColumn, maybeChangeWrappingColumn, rewrap} from './Core'
+import {getWrappingColumn, maybeChangeWrappingColumn, rewrap, saveDocState} from './Core'
 import {buildEdits, catchErr, docType, docLine, getDocState} from './Common'
 import vscode, {TextEditor, TextEditorEdit, commands, window, workspace} from 'vscode'
 import {getCoreSettings, getEditorSettings, getOnSaveSetting} from './Settings'
@@ -76,7 +76,10 @@ const doWrap = (editor: TextEditor, editBuilder: TextEditorEdit, customColumn?) 
     const selections = editor.selections
 
     const edit = rewrap(docType(doc), settings, selections, docLine(doc))
-    buildEdits (doc, edit, editBuilder, isNaN(customColumn))
+    // If nothing changed, the state of the document is the same as before. It still has
+    // to be saved, so that wrapping again moves on to the next ruler.
+    if (edit.isEmpty) { if (isNaN(customColumn)) saveDocState(docState) }
+    else buildEdits (doc, edit, editBuilder, isNaN(customColumn))
   }
   catch (err) { catchErr(err) }
 }

@@ -124,6 +124,23 @@ const testAutoWrapCursorWithVimStyleTyping = async () => {
   }
 }
 
+/** With multiple rulers, wrapping twice in a row moves on to the next ruler, even if the
+ *  first wrap didn't change anything. Plaintext has rulers at 45 and 90. */
+const testRulerCycleAfterNoopWrap = async () => {
+  const line1 = 'aaaa '.repeat(8).trimEnd(), line2 = 'bbbbbbb bbbbbbb'
+  const doc = await workspace.openTextDocument({language: 'plaintext', content: line1 + '\n' + line2})
+  await window.showTextDocument(doc)
+  await commands.executeCommand('rewrap.rewrapComment')
+  assert.equal(doc.getText(), line1 + '\n' + line2, 'already wrapped at 45')
+  await commands.executeCommand('rewrap.rewrapComment')
+  assert.equal(doc.getText(), line1 + ' ' + line2, 'wrapped at 90')
+  // Cycles back to the first ruler. (This also resets the column remembered for the
+  // document's path, which may be reused by other untitled documents.)
+  await commands.executeCommand('rewrap.rewrapComment')
+  assert.equal(doc.getText(), line1 + '\n' + line2, 'wrapped at 45 again')
+  await commands.executeCommand('workbench.action.revertAndCloseActiveEditor')
+}
+
 exports.run = async () => {
   // Settings tests
   // breaks when run in parallel (Promise.all)
@@ -140,4 +157,7 @@ exports.run = async () => {
   
   // lineComment can also be an object (#58)
   await testWrapping ("rewrap-test-custom-object", "# a\n# b", "# a b")
+
+  // Ruler tests
+  await testRulerCycleAfterNoopWrap()
 }

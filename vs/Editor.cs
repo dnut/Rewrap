@@ -31,8 +31,10 @@ namespace VS
 
             var edit = Core.rewrap
                 (file, settings, GetSelections(textView, snapshot), DocLine(snapshot));
-            if (ApplyEdit(textView, snapshot, edit))
-                Core.saveDocState(getDocState(textBuffer.CurrentSnapshot));
+            // The state is saved even if nothing changed, so that wrapping again moves on
+            // to the next ruler.
+            ApplyEdit(textView, snapshot, edit);
+            Core.saveDocState(getDocState(textBuffer.CurrentSnapshot));
         }
 
         /// If conditions are met, does an auto-wrap for the given text view.
