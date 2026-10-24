@@ -154,7 +154,11 @@ let mutable languages = [
         <| toNewDocProcessor Latex.latex
     lang "Lean" "" ".lean" <| sc [line "--"; block ("/-[-!]?", "-/")]
     lang "Less" "" ".less" java
-    lang "Lua" "" ".lua" <| sc [block (@"--\[(=*)\[", @"\]$1\]"); line "--"]
+    lang "Lua" "" ".lua"
+      <| sc [ block (@"--\[(=*)\[", @"\]$1\]")
+              // Doc comments (lua-language-server). Annotation lines are never wrapped.
+              line' "---" (noWrapLines @"^\s*[@|]" markdown_comment)
+              line "--(?!-)" ]
     lang "Makefile" "make" "makefile" <| configFile
     lang "Markdown" "mdx|quarto|rmd" ".md|.mdx|.rmd|.qmd" <| docOf markdown
     // MATLAB uses .m but that's already taken for Objective-C

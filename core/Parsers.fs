@@ -35,14 +35,14 @@ let dartdoc : ContentParser -> ContentParser =
 
 let dartdoc_markdown ctx = dartdoc markdown_comment ctx
 
-/// ESLint configuration comments parser that prevents wrapping of disable/enable lines
-/// https://github.com/dnut/Rewrap/issues/33
-let eslintConfigComments : ContentParser -> ContentParser =
+/// Wraps a content parser so that lines matching the given regex are never wrapped. Such a
+/// line also ends any paragraph before it.
+let noWrapLines (pattern: string) : ContentParser -> ContentParser =
+  let rx = regex pattern
   fun content ctx ->
 
   let tryMatchDirective : Line -> Option<FirstLineRes> =
-    tryMatch' (regex @"^\s*(eslint-disable-next-line|eslint-disable-line|eslint-disable|eslint-enable)\b") <>>> fun (_, line) ->
-      finished_ line noWrapBlock
+    tryMatch' rx <>>> fun (_, line) -> finished_ line noWrapBlock
 
   let rec wrapFLR : FirstLineRes -> FirstLineRes = function
   | Pending r -> Pending ^| wrapResultParser nlpWrapper r
@@ -62,6 +62,11 @@ let eslintConfigComments : ContentParser -> ContentParser =
               FinishedOnPrev (wrapFLR <<|> (maybeR <|> (fun _ -> Some (content ctx line))))
 
   (tryMatchDirective |? content ctx) >> wrapFLR
+
+/// ESLint configuration comments parser that prevents wrapping of disable/enable lines
+/// https://github.com/dnut/Rewrap/issues/33
+let eslintConfigComments : ContentParser -> ContentParser =
+  noWrapLines @"^\s*(eslint-disable-next-line|eslint-disable-line|eslint-disable|eslint-enable)\b"
 
 let ignoreAll ctx = Parsing_Internal.ignoreAll ctx
 
