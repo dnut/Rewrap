@@ -112,6 +112,7 @@ nav:
               - specs/content-types/restructuredtext/narrow-section-titles.md
               - specs/content-types/restructuredtext/tables.md
               - specs/content-types/restructuredtext/transitions-section-titles.md
+          - specs/content-types/structured-text.md
           - specs/content-types/tcl.md
           - specs/content-types/yaml.md
           - specs/content-types/zig.md

@@ -204,6 +204,12 @@ let mutable languages = [
     lang "Shaderlab" "" ".shader" java
     lang "Shell script" "shellscript" ".sh" <| sc [line @"#(?!!)"]
     lang "SQL" "postgres" ".pgsql|.psql|.sql" <| sc [line "--"; cBlock]
+    lang "Structured Text" "iecst|structured-text|st" ".iecst|.st"
+      <| sc [ // /** and /*!, but not /**/ (empty) or /*** (banners)
+              block' ("*", " * ") (@"/\*[*!](?![*/])", @"\*/") markdown_comment
+              cBlock
+              block' ("*", "") (@"\(\*", @"\*\)") markdown_comment
+              line @"//[/!]?" ]
     lang "Swift" "" ".swift" java
     lang "Tcl" "" ".tcl" <| configFile
     lang "Textile" "" ".textile" <| docOf markdown
