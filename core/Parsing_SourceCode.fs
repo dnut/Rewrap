@@ -243,11 +243,11 @@ let private mkPrefixFn start len rep (pre: string) : string =
   pre.Substring(0, start) + rep + pre.Substring(start + len)
 
 
-/// Block comment parser
-let blockComment :
-  (string * string) -> (string * string) -> ContentParser -> TryNewParser =
+/// Block-comment parser with optional nesting of C-style delimiters.
+let private blockCommentWithNesting :
+  bool -> (string * string) -> (string * string) -> ContentParser -> TryNewParser =
 
-  fun (bodyMarkers, defaultBodyMarker) (startMarker, endMarker) contentParser ->
+  fun nested (bodyMarkers, defaultBodyMarker) (startMarker, endMarker) contentParser ->
   let startRegex = regex (@"^\s*" + startMarker + @"\s*")
   let comment prefixFn endMatchIndex =
     BlockCommentBlock(contentParser, bodyMarkers, defaultBodyMarker, prefixFn, endMatchIndex)
@@ -265,19 +265,32 @@ let blockComment :
     let endPattern =
       let step (i:int, r:string) s = i + 1, r.Replace("$" + i.ToString(), s)
       Array.fold step (0, endMarker) m |> snd
-    let endRegex = regex endPattern
+    let delimiterRegex = regex (if nested then @"/\*|\*/" else endPattern)
 
-    let rec testForEnd (line: Line) : FirstLineRes =
-      let m = endRegex.Match(line.content)
-      if m.Success then finished_ line (comment prefixFn m.Index)
-      else pending line defComment (ThisLine << testForEnd)
+    let rec testForEnd depth fromPos (line: Line) : FirstLineRes =
+      let m = delimiterRegex.Match(line.content, fromPos)
+      if not m.Success then
+        pending line defComment (ThisLine << testForEnd depth 0)
+      else
+        let depth = if nested && m.Value = "/*" then depth + 1 else depth - 1
+        if depth = 0 then finished_ line (comment prefixFn m.Index)
+        else testForEnd depth (m.Index + m.Length) line
 
 
 
     let startLine = Line.adjustSplit m.[0].Length startLine
-    testForEnd startLine
+    testForEnd 1 0 startLine
 
   fun _ctx line -> tryMatch startRegex line <|>> onFindStart line
+
+
+/// Standard block comments end at the first matching closing delimiter.
+let blockComment markers delimiters contentParser =
+  blockCommentWithNesting false markers delimiters contentParser
+
+/// Rust block comments can nest.
+let rustBlockComment markers delimiters contentParser =
+  blockCommentWithNesting true markers delimiters contentParser
 
 
 let sourceCode : List<TryNewParser> -> DocumentProcessor =

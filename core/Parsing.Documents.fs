@@ -187,7 +187,11 @@ let mutable languages = [
     lang "R" "" ".r" <| sc [line "#'?"]
     lang "reStructuredText" "rst" ".rst|.rest" <| docOf rst
     lang "Ruby" "" ".rb" <| sc [line "#"; block ("=begin", "=end")]
-    lang "Rust" "" ".rs" <| sc [line @"//[/!]?"]
+    lang "Rust" "" ".rs"
+      <| sc [ // Doc comments are /** and /*!, but not /**/ or /***
+              rustBlockComment ("*", " * ") (@"/\*[*!](?![*/])", @"\*/") markdown_comment
+              rustBlockComment ("*", "") (@"/\*", @"\*/") markdown_comment
+              line @"//[/!]?" ]
     lang "SCSS" "" ".scss" java
     // Sass still needs to be supported.
     // -  http://sass-lang.com/documentation/file.INDENTED_SYNTAX.html
