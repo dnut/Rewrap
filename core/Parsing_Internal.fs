@@ -119,7 +119,9 @@ let container : ContentParser -> PrefixTransformer -> (Line -> Option<Line>) -> 
     | None ->
         match maybeInnerParser, wasPara with
         | Some p, true -> wrapFLR (p line)
-        | _ -> (maybeInnerParser |? content ctx) line
+        // Otherwise the line is outside the container, so also outside any container
+        // nested in it, and starts a new block
+        | _ -> content ctx line
 
   and nlpWrapper wasPara innerParser line : NextLineRes =
     match lineTest line with

@@ -63,3 +63,18 @@ blockquote marker, so an indented code block has to be indented 5 spaces.
     > one··  ¦                > one··  ¦
     two      ¦        ->      two three¦
     > three four              > four
+
+When a blockquote or list item has terminated, a line after it is outside any container
+nested in it too. Here the blockquote terminates after the blank line, so the indented line
+after it is an indented code block, not part of the list item.
+
+    > - aaa     ¦    ->  > - aaa     ¦
+    >           ¦        >           ¦
+    ····bbb ccc ddd      ····bbb ccc ddd
+
+And here the list item terminates, so the second line starts a new blockquote, with a fenced
+code block in it.
+
+    - > - # aaa ¦  ->  - > - # aaa ¦
+    >   ~~~     ¦      >   ~~~     ¦
+    > bbb ccc ddd      > bbb ccc ddd
