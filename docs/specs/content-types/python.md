@@ -153,3 +153,89 @@ The content of Python docstrings is reStructuredText.
       literal           ¦                       literal           ¦
       block             ¦                       block             ¦
     """                 ¦                     """                 ¦
+
+
+## Google style docstrings
+
+In sections of items in [Google style](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings)
+docstrings (`Args:`, `Raises:` etc.), each item starts on a new line. Lines indented
+further than an item continue it, and are indented further when it's wrapped
+([#26](https://github.com/dnut/Rewrap/issues/26)).
+
+    """                           ¦  ->  """                           ¦
+    Aaa bbb                       ¦      Aaa bbb ccc.                  ¦
+    ccc.                          ¦
+                                  ¦      Args:                         ¦
+    Args:                         ¦          x (int): Ddd.             ¦
+        x (int): Ddd.             ¦          y (str): Eee.             ¦
+        y (str): Eee.             ¦
+                                  ¦      Returns:                      ¦
+    Returns:                      ¦          int: Fff.                 ¦
+        int: Fff.                 ¦      """                           ¦
+    """                           ¦
+
+    """                 ¦         ->  """                 ¦
+    Args:               ¦             Args:               ¦
+        x (int): Aaa bbb ccc ddd          x (int): Aaa bbb¦
+        y: Eee          ¦                     ccc ddd     ¦
+            fff         ¦                 y: Eee fff      ¦
+        **kwargs: Ggg   ¦                 **kwargs: Ggg   ¦
+    Raises:             ¦             Raises:             ¦
+        ValueError: Hhh ¦                 ValueError: Hhh ¦
+    """                 ¦             """                 ¦
+
+An item's description is normal reStructuredText, so it can contain other blocks, which as
+elsewhere are separated from its first paragraph by a blank line.
+
+    """                               ¦  ->  """                               ¦
+    Args:                             ¦      Args:                             ¦
+        mode (str): The mode,         ¦          mode (str): The mode, one of: ¦
+            one of:                   ¦                                        ¦
+                                      ¦              - a: Aaa                  ¦
+            - a: Aaa                  ¦              - b: Bbb                  ¦
+            - b: Bbb                  ¦                                        ¦
+                                      ¦              >>> f(mode)               ¦
+            >>> f(mode)               ¦              1                         ¦
+            1                         ¦          x: Ccc.                       ¦
+        x: Ccc.                       ¦      """                               ¦
+    """                               ¦
+
+    """                           ¦  ->  """                           ¦
+    Args:                         ¦      Args:                         ¦
+        x: For example::          ¦          x: For example::          ¦
+                                  ¦                                    ¦
+            foo(1) bar(2)         ¦              foo(1) bar(2)         ¦
+            baz(3)                ¦              baz(3)                ¦
+    """                           ¦      """                           ¦
+
+The description can start on the line after the item's name.
+
+    """                 ¦     ->  """                 ¦
+    Args:               ¦         Args:               ¦
+        config:         ¦             config:         ¦
+            Aaa bbb ccc ddd.              Aaa bbb ccc ¦
+    """                 ¦                 ddd.        ¦
+                                  """                 ¦
+
+As in Sphinx's napoleon extension, section names aren't case sensitive, there can be blank
+lines after the header, and `Raise`, `Receive` and `Warn` (and their plurals) are also
+section names.
+
+    """                               ¦  ->  """                               ¦
+    raise:                            ¦      raise:                            ¦
+                                      ¦                                        ¦
+        ValueError: Aaa               ¦          ValueError: Aaa               ¦
+        TypeError: Bbb                ¦          TypeError: Bbb                ¦
+    """                               ¦      """                               ¦
+
+NumPy style docstrings are already handled as reStructuredText.
+
+    """                 ¦  ->  """                 ¦
+    Parameters          ¦      Parameters          ¦
+    ----------          ¦      ----------          ¦
+    x : int             ¦      x : int             ¦
+        Aaa             ¦          Aaa bbb.        ¦
+        bbb.            ¦      y : str             ¦
+    y : str             ¦          Ccc.            ¦
+        Ccc.            ¦      """                 ¦
+    """                 ¦

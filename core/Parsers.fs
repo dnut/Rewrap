@@ -139,3 +139,5 @@ let plainText_indentSeparated : ContentParser = fun _ctx ->
     if isBlankLine line then finished_ line noWrapBlock else pending line wrapBlock (parseNext indent)
 
 let rst ctx = Parsers_RST.rst ctx
+
+let pythonDocstring ctx = Parsers_RST.pythonDocstring ctx

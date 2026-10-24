@@ -303,6 +303,64 @@ let private fieldItem : TryNewParser =
   tryMatch' rx >> map onMatch
 
 
+//---------- Google style docstring sections -------------------------------------------//
+
+
+// Sections of items in Google style Python docstrings (eg "Args:"), as understood by
+// Sphinx's napoleon extension, which turns them into field lists. Napoleon takes each line
+// at the indent of the first item as the start of an item, whose description is the rest of
+// the line plus any blank or further indented lines, and is normal reStructuredText.
+// https://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html
+
+
+/// Line test for a container: the line is blank or indented further than the given indent
+let private blankOrDeeperThan (ctx: Context) (indent: int) (line: Line) : Option<Line> =
+  if isBlankLine line || prefixWidth ctx (trimWhitespace line) > indent then Some line
+  else None
+
+
+/// An item, eg "x (int): Description". Like a field list item, its content is the rest of
+/// the line and any lines indented further. Lines after it go to the given section parser.
+let private googleItem (section: ContentParser) (itemIndent: int) : ContentParser = fun ctx ->
+  // The name is everything up to the first colon followed by whitespace. Without one, the
+  // whole line is the description.
+  let rx = regex @"^(\s*)(?:\S.*?:(?=\s|$))?"
+  fun line ->
+  let m = (tryMatch rx line).Value
+  let indentLength, markerLength = m[1].Length, m[0].Length - m[1].Length
+  // Wrapped lines are indented 4 spaces further than the item (3 here plus the space that
+  // follows the colon)
+  let spaces = if markerLength = 0 then 4 else 3
+  let prefixFn = blankOut' (line.split + indentLength) markerLength spaces ""
+  let test = blankOrDeeperThan ctx itemIndent
+  container' (bodyElements true) section prefixFn test ctx (Line.adjustSplit m[0].Length line)
+
+
+/// A section header, eg "Args:", and its items
+let private googleSection : TryNewParser = fun ctx ->
+  let headerRx =
+    regex (@"^\s*(?:args|arguments|attributes|keyword args|keyword arguments|methods"
+           + @"|other parameters|parameters|raises?|receives?|warns?):\s*$")
+  // Parses a line in the section. A line at the item indent starts a new item.
+  let rec section itemIndent : ContentParser = fun ctx line ->
+    if not (isBlankLine line) && prefixWidth ctx (trimWhitespace line) = itemIndent
+      then googleItem (section itemIndent) itemIndent ctx line
+    else bodyElements false ctx line
+  // Like napoleon, skip blank lines after the header, and only take it as a section if the
+  // line after those is indented further than it
+  let rec afterHeader headerIndent line =
+    if isBlankLine line then ThisLine (pending line noWrapBlock (afterHeader headerIndent))
+    else
+    let itemIndent = prefixWidth ctx (trimWhitespace line)
+    if itemIndent <= headerIndent then finishedOnPrev_ else
+    let content = section itemIndent
+    let test = blankOrDeeperThan ctx headerIndent
+    finishedOnPrev (container' content docstringBlock id test ctx line)
+  fun line ->
+    if not (isMatch headerRx line) then None else
+    Some (pending line noWrapBlock (afterHeader (prefixWidth ctx (trimWhitespace line))))
+
+
 //---------- Putting it together -------------------------------------------------------//
 
 
@@ -314,14 +372,15 @@ let private bodyElements : bool -> ContentParser =
       |? paragraph inFieldItem
 
 
-let rst : ContentParser =
+/// A reStructuredText document, using the given parser for its top-level blocks
+let private rstWith (topLevelBlock: ContentParser) : ContentParser =
   fun ctx ->
   let rec wrapFLR : FirstLineRes -> FirstLineRes = function
     | Pending r -> Pending (wrapResultParser nlpWrapper r)
     | Finished r -> Finished (wrapResultParser (fun p -> Some (flpWrapper p)) r)
   and flpWrapper : Option<FirstLineParser> -> FirstLineParser = function
     | Some inner -> inner >> wrapFLR
-    | None -> bodyElements false ctx
+    | None -> topLevelBlock ctx
   and nlpWrapper inner line : NextLineRes = inner line |> function
     | ThisLine flr -> ThisLine (wrapFLR flr)
     | FinishedOnPrev maybeThisLineRes ->
@@ -329,3 +388,13 @@ let rst : ContentParser =
         FinishedOnPrev <| Some (wrapFLR tlr)
 
   flpWrapper None
+
+
+/// A top-level block in a Python docstring, which can also be a Google style section
+let private docstringBlock : ContentParser = googleSection |? bodyElements false
+
+
+let rst : ContentParser = rstWith (bodyElements false)
+
+/// reStructuredText in a Python docstring
+let pythonDocstring : ContentParser = rstWith docstringBlock

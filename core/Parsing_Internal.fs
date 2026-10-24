@@ -104,10 +104,12 @@ let wrapPrefixFn prefixFn =
 let voidParseLine = fun _ -> ()
 
 
-/// Makes a container. Takes a prefix-modifying function, and a function to test each line
-/// to check we're still in the container, before passing the line to the inner parser.
-let container : ContentParser -> PrefixTransformer -> (Line -> Option<Line>) -> ContentParser =
-  fun content prefixFn lineTest ctx ->
+/// Makes a container. Takes the inner parser, the parser for a line that starts a new block
+/// outside the container, a prefix-modifying function, and a function to test each line to
+/// check we're still in the container, before passing the line to the inner parser.
+let container' :
+  ContentParser -> ContentParser -> PrefixTransformer -> (Line -> Option<Line>) -> ContentParser =
+  fun content outside prefixFn lineTest ctx ->
 
   let rec wrapFLR : FirstLineRes -> FirstLineRes = function
   | Pending r -> Pending (wrapResultParser (nlpWrapper r.isDefault) r)
@@ -121,7 +123,7 @@ let container : ContentParser -> PrefixTransformer -> (Line -> Option<Line>) -> 
         | Some p, true -> wrapFLR (p line)
         // Otherwise the line is outside the container, so also outside any container
         // nested in it, and starts a new block
-        | _ -> content ctx line
+        | _ -> outside ctx line
 
   and nlpWrapper wasPara innerParser line : NextLineRes =
     match lineTest line with
@@ -138,6 +140,11 @@ let container : ContentParser -> PrefixTransformer -> (Line -> Option<Line>) -> 
       | FinishedOnPrev x -> FinishedOnPrev x
 
   content ctx >> wrapFLR >> wrapPrefixFn prefixFn
+
+/// Like `container'`, but the inner parser is also used for a line that starts a new block
+/// outside the container.
+let container : ContentParser -> PrefixTransformer -> (Line -> Option<Line>) -> ContentParser =
+  fun content -> container' content content
 
 
 //---------- Common Parsers ------------------------------------------------------------//

@@ -43,6 +43,15 @@ it a new paragraph (though would give a warning).
     ··Less indented     ¦              ->     ··Less indented text¦
     ··text              ¦                                         ¦
 
+A line followed by more indented lines is a definition list item, whose term and
+definition are separate paragraphs. This includes terms like `Parameters:`, which only
+start a section of items in a [Google style Python docstring](../python.md).
+
+    Parameters:          ¦  ->  Parameters:          ¦
+    ····The parameters   ¦      ····The parameters of¦
+    ····of this function ¦      ····this function are¦
+    ····are listed here. ¦      ····listed here.     ¦
+
 
 ## Section titles
 
