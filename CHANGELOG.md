@@ -1,5 +1,35 @@
 See also [https://github.com/dnut/rewrap/releases](https://github.com/dnut/rewrap/releases) (for working links to issues)
 
+# 18.4.0
+
+Features:
+- Rust: Wrap block comments and doc block comments, including nested comments
+  (#42).
+
+Fixes:
+- Lua: Keep `---` doc comments separate from plain comments and preserve their
+  prefixes when wrapping. Don't wrap annotations or `---|` continuation lines
+  (#35).
+- In Markdown-parsed comments, keep decorative separators apart from prose and
+  preserve fenced code and HTML blocks. Don't treat a leading `---` as YAML
+  front matter (#50).
+- JSDoc/Javadoc: Preserve `@example` blocks and inline tags such as `{@link ...}`
+  when they start on the first comment line (#50).
+- DartDoc: Keep special tags on the first comment line apart from following
+  text (#50).
+- Fix errors and skipped paragraphs when the primary cursor is below another
+  cursor in a multi-cursor selection.
+- VS Code and Visual Studio: Keep cycling through wrapping rulers after a wrap
+  that doesn't change the text.
+
+Maintenance:
+- Update the development toolchain to .NET 10, Node.js 26, Fable 5 and
+  Nixpkgs 26.05, and upgrade dependencies and CI actions.
+- Separate build caches in `.cache` from deployable artifacts in `dist`,
+  relocate test caches and .NET tooling, and remove obsolete build scripts.
+- Simplify bug reports and add a dedicated issue template for incorrect
+  wrapping.
+
 # 18.3.0
 
 Features:
