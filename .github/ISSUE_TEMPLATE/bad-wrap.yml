@@ -1,0 +1,90 @@
+name: Incorrect Wrapping
+description: The code did not wrap in the way I expected.
+title: "[Bad Wrap] "
+labels: ["bug", "bad wrap"]
+
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Rewrap Revived Version
+      placeholder: e.g. 18.3.0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: ide
+    attributes:
+      label: IDE
+      options:
+        - Visual Studio Code
+        - Visual Studio
+        - Code - OSS
+        - Other (describe below)
+    validations:
+      required: true
+
+  - type: textarea
+    id: setup
+    attributes:
+      label: Wrapping setup
+      description: |
+        Tell us the file's language mode, your configured wrapping column or ruler(s),
+        and where your cursor was or which text you selected. Mention auto-wrap or wrap
+        on save or other non-default Rewrap settings if relevant.
+      placeholder: |
+        Language: Rust
+        Wrapping column: 80
+        Cursor/selection: Cursor on line 2, nothing selected
+    validations:
+      required: true
+
+  - type: textarea
+    id: before
+    attributes:
+      label: What you tried to wrap
+      description: |
+        Paste a small example as text, not a screenshot. Keep the original line breaks,
+        indentation, comment markers, and any surrounding lines needed to reproduce it.
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: after
+    attributes:
+      label: What Rewrap turned it into
+      description: Paste the text after wrapping, including any unexpected changes outside the comment or selection. If nothing changed, simply say "nothing changed."
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: wanted
+    attributes:
+      label: What you wanted it to look like
+      description: Show one acceptable result. If you're unsure of the exact output, explain what should change below instead.
+      render: text
+    validations:
+      required: false
+
+  - type: textarea
+    id: why
+    attributes:
+      label: Why is this wrapping wrong?
+      description: |
+        Explain what the result gets wrong: for example, changing code, damaging a
+        Markdown list or code block, losing comment prefixes, or wrapping at the wrong column.
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Additional context
+      description: |
+        Logs, screenshots, VS Code version, other extensions... All of this context is helpful if you can provide it.
+        To get your VS Code version: Go to Help > About and then click "Copy".
+        To get a list of all extensions: code --list-extensions --show-versions
+    validations:
+      required: false

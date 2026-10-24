@@ -1,5 +1,5 @@
-name: Bug report
-description: Report something that isn't working correctly.
+name: Other Bugs
+description: Something went wrong, and it was not an incorrect wrap.
 title: "[Bug] "
 labels: ["bug"]
 
@@ -25,43 +25,23 @@ body:
       required: true
 
   - type: textarea
-    id: ide-version
+    id: setup
     attributes:
-      label: IDE Version
-      description: Go to Help > About and then click Copy
+      label: Rewrap Configuration
+      description: |
+        Mention any relevant rewrap or ruler settings you have modified
       placeholder: |
-        Version:
-        Commit:
-        Date:
-        Electron:
-        ElectronBuildId:
-        Chromium:
-        Node.js:
-        V8:
-        OS:
+        Wrapping column: 80
     validations:
       required: true
-
-  - type: textarea
-    id: extensions
-    attributes:
-      label: Installed Extensions
-      description: code --list-extensions --show-versions
-    validations:
-      required: true
-
-  - type: input
-    id: lang
-    attributes:
-      label: Language where the bug occurred (if applicable)
-      placeholder: e.g. Python
-    validations:
-      required: false
 
   - type: textarea
     id: description
     attributes:
       label: Describe the bug
+      placeholder: |
+        Expected Result: I made a cool app
+        Actual Result: Computer exploded
     validations:
       required: true
 
@@ -79,7 +59,10 @@ body:
   - type: textarea
     id: logs
     attributes:
-      label: Logs or screenshots
-      description: Optional supporting evidence.
+      label: Additional context
+      description: |
+        Logs, screenshots, VS Code version, other extensions... All of this context is helpful if you can provide it.
+        To get your VS Code version: Go to Help > About and then click "Copy".
+        To get a list of all extensions: code --list-extensions --show-versions
     validations:
       required: false
