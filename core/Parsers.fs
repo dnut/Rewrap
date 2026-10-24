@@ -31,9 +31,9 @@ let dartdoc : ContentParser -> ContentParser =
           | FinishedOnPrev maybeR ->
               FinishedOnPrev (wrapFLR <<|> (maybeR <|> (fun _ -> Some (content ctx line))))
 
-  content ctx >> wrapFLR
+  flpWrapper None
 
-let dartdoc_markdown ctx = dartdoc markdown_noHeader ctx
+let dartdoc_markdown ctx = dartdoc markdown_comment ctx
 
 /// ESLint configuration comments parser that prevents wrapping of disable/enable lines
 /// https://github.com/dnut/Rewrap/issues/33
@@ -106,13 +106,15 @@ let private jsdoc : ContentParser -> ContentParser =
           | FinishedOnPrev maybeR ->
               FinishedOnPrev (wrapFLR <<|> (maybeR <|> (fun _ -> Some (content ctx line))))
 
-  content ctx >> wrapFLR
+  flpWrapper None
 
-let jsdoc_markdown ctx = jsdoc markdown_noHeader ctx
+let jsdoc_markdown ctx = jsdoc markdown_comment ctx
 
 let markdown ctx = Parsers_Markdown.markdown ctx
 
 let markdown_noHeader ctx = Parsers_Markdown.markdown_noHeader ctx
+
+let markdown_comment ctx = Parsers_Markdown.markdown_comment ctx
 
 let plainText : ContentParser = fun _ctx ->
   let rec parseNext line =

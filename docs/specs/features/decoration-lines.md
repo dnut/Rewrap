@@ -27,6 +27,29 @@ then that line is treated like the rest of the markdown content - as a
 non-wrapping line - but the indent is preserved in the case of reformat off and
 normalized in the case of reformat on.
 
+    // a b              ¦  ->   // a b c            ¦
+    // c                ¦       // //////           ¦
+    // //////           ¦       // d e              ¦
+    // d                ¦
+    // e                ¦
+
+This also applies to the first line of the comment.
+
+    //======            ¦  ->   //======            ¦
+    // a b              ¦       // a b c            ¦
+    // c                ¦       //======            ¦
+    //======            ¦
+
+    // ======           ¦  ->   // ======           ¦
+    // a b              ¦       // a b c            ¦
+    // c                ¦       // ======           ¦
+    // ======           ¦
+
+    // ---              ¦  ->   // ---              ¦
+    // a b              ¦       // a b c            ¦
+    // c                ¦       // ---              ¦
+    // ---              ¦
+
 
 ## Block comments ##
 
@@ -57,3 +80,90 @@ indent won't be adjusted.
      * ccccc ddddd               * ddddd    ¦               * ddddd    ¦
      ---------- ¦                ---------- ¦               ---------- ¦
      **********/¦                **********/¦               **********/¦
+
+The first line of a block comment is a decoration line if there is no text after the
+start-comment marker, even if there is whitespace before the rest of the line.
+
+    /* ======           ¦  ->   /* ======           ¦
+     * a b              ¦        * a b c            ¦
+     * c                ¦        */                 ¦
+     */                 ¦
+
+A line with no text that is indented as far as the text is treated as part of the
+markdown content: as a non-wrapping line.
+
+    /**                 ¦  ->   /**                 ¦
+     * ======           ¦        * ======           ¦
+     * a b              ¦        * a b c            ¦
+     * c                ¦        */                 ¦
+     */                 ¦
+
+Markdown block openers are not decoration lines, even when they contain no letters or
+digits. Fences on the opening line of a block comment must still protect their code,
+and prose after the closing fence is wrapped normally.
+
+    /* ```              ¦  ->   /* ```              ¦
+     * f( a )           ¦        * f( a )           ¦
+     * g( b )           ¦        * g( b )           ¦
+     * ```              ¦        * ```              ¦
+     * a b              ¦        * a b c            ¦
+     * c                ¦        */                 ¦
+     */                 ¦
+
+> language: "javascript"
+
+    /** ```             ¦  ->   /** ```             ¦
+     * f( a )           ¦        * f( a )           ¦
+     * g( b )           ¦        * g( b )           ¦
+     * ```              ¦        * ```              ¦
+     * a b              ¦        * a b c            ¦
+     * c                ¦        */                 ¦
+     */                 ¦
+
+    /** ~~~             ¦  ->   /** ~~~             ¦
+     * f( a )           ¦        * f( a )           ¦
+     * g( b )           ¦        * g( b )           ¦
+     * ~~~              ¦        * ~~~              ¦
+     * a b              ¦        * a b c            ¦
+     * c                ¦        */                 ¦
+     */                 ¦
+
+The same applies to HTML blocks in Markdown comments.
+
+    /** <!--            ¦  ->   /** <!--            ¦
+     * f( a )           ¦        * f( a )           ¦
+     * g( b )           ¦        * g( b )           ¦
+     * -->              ¦        * -->              ¦
+     * a b              ¦        * a b c            ¦
+     * c                ¦        */                 ¦
+     */                 ¦
+
+Line-comment fences also work, with or without a space after the comment marker.
+
+    // ```              ¦  ->   // ```              ¦
+    // f( a )           ¦       // f( a )           ¦
+    // g( b )           ¦       // g( b )           ¦
+    // ```              ¦       // ```              ¦
+    // a b              ¦       // a b c            ¦
+    // c                ¦
+
+    //```               ¦  ->   //```               ¦
+    // f( a )           ¦       // f( a )           ¦
+    // g( b )           ¦       // g( b )           ¦
+    //```               ¦       //```               ¦
+    // a b              ¦       // a b c            ¦
+    // c                ¦
+
+> language: "python"
+
+    # ======            ¦  ->   # ======            ¦
+    # a b               ¦       # a b c             ¦
+    # c                 ¦       # ======            ¦
+    # ======            ¦
+
+> language: "go"
+
+    //======            ¦  ->   //======            ¦
+    // a b              ¦       // a b c            ¦
+    // c                ¦       //======            ¦
+    //======            ¦

@@ -117,6 +117,15 @@ This also holds when only the first line is selected
     """        ¦                      Eee.       ¦
                                       """        ¦
 
+A backslash right after the opening quotes (a line continuation, so the string doesn't
+start with a line break) stays on the first line
+([#50](https://github.com/dnut/Rewrap/issues/50)).
+
+    TEST = """\     ¦  ->  TEST = """\     ¦
+    aaa bbb         ¦      aaa bbb ccc     ¦
+    ccc             ¦      """             ¦
+    """             ¦
+
 Strings on one line are wrapped too,
 
     var = """a b c"""      ->      var = """a b

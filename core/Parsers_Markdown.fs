@@ -220,7 +220,12 @@ let private newBlocks (gnb : ContentParser) tpi : List<Context -> Line -> Option
     fencedCode; htmlType1To6; linkRefDef tpi; indentedCode; table ]
 
 
-let private markdownWith (extras: List<Context -> Line -> Option<FirstLineRes>>) : ContentParser =
+/// Markdown parser. `extras` are block parsers that are tried before all others, and
+/// `lastResorts` ones that are tried after all others (before falling back to a
+/// paragraph).
+let private markdownWith
+  (extras: List<Context -> Line -> Option<FirstLineRes>>)
+  (lastResorts: List<Context -> Line -> Option<FirstLineRes>>) : ContentParser =
   /// Finds a new block, checking all options and falling back on default paragraph in
   /// necessary.
   let rec getNewBlock : ContentParser =
@@ -237,12 +242,18 @@ let private markdownWith (extras: List<Context -> Line -> Option<FirstLineRes>>)
       | other -> FinishedOnPrev other
     parseLineAfterLineBreak
 
-  and tryParaInterrupter = tryMany (blankLine :: extras @ paraInterrupters getNewBlock)
-  and tryNewBlock = tryMany (blankLine :: extras @ newBlocks getNewBlock tryParaInterrupter)
+  and tryParaInterrupter =
+    tryMany (blankLine :: extras @ paraInterrupters getNewBlock @ lastResorts)
+  and tryNewBlock =
+    tryMany (blankLine :: extras @ newBlocks getNewBlock tryParaInterrupter @ lastResorts)
 
   container getNewBlock id Some
 
-let markdown_noHeader : ContentParser = markdownWith []
+let markdown_noHeader : ContentParser = markdownWith [] []
+
+/// Markdown in comments. Doesn't have a YAML header, and lines without any text (eg
+/// "// ======") are never wrapped.
+let markdown_comment : ContentParser = markdownWith [] [nonText]
 
 /// Markdown with a header starting & ending with `---` lines
 /// https://dotnet.github.io/docfx/spec/docfx_flavored_markdown.html

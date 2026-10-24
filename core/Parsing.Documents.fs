@@ -27,16 +27,16 @@ let private sc comments = Parsing_SourceCode.sourceCode comments
 
 // For creating line comments
 let private line' m p = lineComment m p
-let private line m = line' m markdown
+let private line m = line' m markdown_comment
 
 // For creating block comments. In the start marker, anything in the 1st capture group
 // will be replaced with whitespace if a 1-line comment is wrapped onto a 2nd line. In the
 // end marker, $n can be used for the result of the nth captured group in the start marker
 let block' innerMarkers outerMarkers = blockComment innerMarkers outerMarkers
-let block (startMarker, endMarker) = block' ("", "") (startMarker, endMarker) markdown
+let block (startMarker, endMarker) = block' ("", "") (startMarker, endMarker) markdown_comment
 
 // Common comment markers/types
-let cBlock = block' ("*", "") (@"/\*", @"\*/") markdown
+let cBlock = block' ("*", "") (@"/\*", @"\*/") markdown_comment
 let javadocMarkers = (@"/\*[*!]", @"\*/")
 let jsDocBlock = block' ("*", " * ") javadocMarkers jsdoc_markdown
 
@@ -47,13 +47,13 @@ let java : DocumentProcessor =
   sc [ jsDocBlock; cBlock; line' "//[/!]" jsdoc_markdown; line "//" ]
 
 let private cBlockWithEslint =
-  block' ("*", "") (@"/\*", @"\*/") (eslintConfigComments markdown)
+  block' ("*", "") (@"/\*", @"\*/") (eslintConfigComments markdown_comment)
 
 let private jsDocBlockWithEslint =
   block' ("*", " * ") javadocMarkers (eslintConfigComments jsdoc_markdown)
 
 let javascript : DocumentProcessor =
-  sc [ jsDocBlockWithEslint; cBlockWithEslint; line' "//[/!]" (eslintConfigComments jsdoc_markdown); line' "//" (eslintConfigComments markdown) ]
+  sc [ jsDocBlockWithEslint; cBlockWithEslint; line' "//[/!]" (eslintConfigComments jsdoc_markdown); line' "//" (eslintConfigComments markdown_comment) ]
 
 // Takes 4 args to create a Language:
 //  1. display name (used only in VS)

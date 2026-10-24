@@ -209,3 +209,26 @@ as leading *'s.
 ```
 
 Relevant: https://www.doxygen.nl/manual/markdown.html#mddox_stars
+
+
+## First line of the comment ##
+
+> language: "javascript"
+
+Tags and inline tags are handled in the same way on the first line of the comment as
+on any other.
+
+    /** aaa {@link a b} */      ->      /** aaa           ¦
+                      ¦                  * {@link a b} */ ¦
+
+    /// aaa {@link a b}         ->      /// aaa           ¦
+                      ¦                 /// {@link a b}   ¦
+
+    /** @example       ¦      ->      /** @example       ¦
+     * f( a )          ¦               * f( a )          ¦
+     * g( b )          ¦               * g( b )          ¦
+     */                ¦               */                ¦
+
+    /// @example       ¦      ->      /// @example       ¦
+    /// f( a )         ¦              /// f( a )         ¦
+    /// g( b )         ¦              /// g( b )         ¦

@@ -80,21 +80,30 @@ let withDecorations : ContentParser -> PrefixTransformer -> ContentParser =
   fun contentParser prefixFn ctx ->
 
   let rec wrapFLR = function
-    | Pending r -> Pending (wrapResultParser nlpWrapper r)
+    | Pending r ->
+        Pending (wrapResultParser (nlpWrapper (r.blockType.bType = BlockType.NoWrap)) r)
     | Finished r -> Finished (wrapResultParser (fun p -> Some (flpWrapper p)) r)
 
   and flpWrapper maybeFLP : FirstLineParser = function
-    | :? DecorationLine as line -> finished line noWrapBlock (flpWrapper None)
+    | :? DecorationLine as line ->
+        // Symbol-only lines can open a non-wrapping region (eg ``` or <!--).
+        // Keep that parser's state, but never start a wrapping paragraph here.
+        match (maybeFLP |? contentParser ctx) line with
+        | Pending r when r.blockType.bType = BlockType.NoWrap -> wrapFLR (Pending r)
+        | _ -> finished line noWrapBlock (flpWrapper None)
     | _ as line -> (maybeFLP |? contentParser ctx) line |> wrapFLR
 
-  and nlpWrapper nlp : NextLineParser = function
-    | :? DecorationLine as line -> FinishedOnPrev <| Some (flpWrapper None line)
+  and nlpWrapper inNoWrapBlock nlp : NextLineParser = function
+    // Let code/HTML parsers consume their closing markers and any symbol-only
+    // lines inside them, rather than mistaking those lines for decorations.
+    | :? DecorationLine as line when not inNoWrapBlock ->
+        FinishedOnPrev <| Some (flpWrapper None line)
     | _ as line -> nlp line |> function
         | ThisLine r -> ThisLine (wrapFLR r)
         | FinishedOnPrev maybeR ->
             FinishedOnPrev <| Some (maybe' (fun _ -> flpWrapper None line) wrapFLR maybeR)
 
-  contentParser ctx >> wrapFLR >> wrapPrefixFn prefixFn
+  flpWrapper None >> wrapPrefixFn prefixFn
 
 
 /// Takes comment lines from either a line or block comment and parses into blocks.
