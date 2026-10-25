@@ -84,13 +84,26 @@ has a blank line following.
 It doesn't matter to us whether the table is malformed or not since the result is the
 same: it's not wrapped.
 
+A table doesn't need a header. Text after the table is wrapped as normal
+([#45](https://github.com/dnut/Rewrap/issues/45)).
+
+    aaa bbb             ¦  ->  aaa bbb ccc         ¦
+    ccc                 ¦
+                        ¦      ======= =======     ¦
+    ======= =======     ¦      This    is          ¦
+    This    is          ¦      ======= =======     ¦
+    ======= =======     ¦
+                        ¦      ddd eee fff         ¦
+    ddd eee             ¦
+    fff                 ¦
+
 A complete table because a blank line comes after the 2nd `= =`.
 
     = =          ¦                            = =          ¦
     = =          ¦                            = =          ¦
                  ¦                     ->                  ¦
-    normal       ¦                            normal       ¦
-    text         ¦                            text         ¦
+    normal       ¦                            normal text  ¦
+    text         ¦                                         ¦
 
 If the closing line is followed by a blank line, its only conditions are:
 - It must not be indented
@@ -111,14 +124,14 @@ If the closing line is followed by a blank line, its only conditions are:
     = =          ¦                            = =          ¦
     =            ¦                            =            ¦
                  ¦                     ->                  ¦
-    normal       ¦                            normal       ¦
-    text         ¦                            text         ¦
+    normal       ¦                            normal text  ¦
+    text         ¦                                         ¦
 
     = =          ¦                            = =          ¦
     ====         ¦                            ====         ¦
                  ¦                     ->                  ¦
-    normal       ¦                            normal       ¦
-    text         ¦                            text         ¦
+    normal       ¦                            normal text  ¦
+    text         ¦                                         ¦
 
 An internal line of `=`s may be present as long it is not followed as a blank line. This
 denotes the end of the table header. If this line is present, then the next valid line of
@@ -138,6 +151,45 @@ denotes the end of the table header. If this line is present, then the next vali
     = =          ¦                     ->     = =          ¦
     normal       ¦                            normal text  ¦
     text         ¦                                         ¦
+
+Like the closing line, these can be any line of `=`s, eg one without spaces (as in docutils).
+
+    ===  ===            ¦   ->   ===  ===            ¦
+    in1  in2            ¦        in1  in2            ¦
+    ===  ===            ¦        ===  ===            ¦
+     1    2             ¦         1    2             ¦
+    ========            ¦        ========            ¦
+    normal              ¦        normal text         ¦
+    text                ¦
+
+    ===  ===            ¦   ->   ===  ===            ¦
+    in1  in2            ¦        in1  in2            ¦
+    ========            ¦        ========            ¦
+     1    2             ¦         1    2             ¦
+    ===  ===            ¦        ===  ===            ¦
+    normal              ¦        normal text         ¦
+    text                ¦
+
+A line of `=`s that's indented more than the table isn't one of its border lines.
+
+    = =                 ¦   ->   = =                 ¦
+    a b                 ¦        a b                 ¦
+     = =                ¦         = =                ¦
+    c d                 ¦        c d                 ¦
+    = =                 ¦        = =                 ¦
+                        ¦                            ¦
+    normal              ¦        normal text         ¦
+    text                ¦
+
+As in docutils, an internal line of `=`s that's followed by a blank line ends the table, even
+if it was meant to end the header. The lines after it are then a paragraph.
+
+    = =                 ¦   ->   = =                 ¦
+    a b                 ¦        a b                 ¦
+    = =                 ¦        = =                 ¦
+                        ¦                            ¦
+    c d                 ¦        c d e f             ¦
+    e f                 ¦
 
 
 The rest of the way a simple table works cannot currently be supported by Rewrap. It scans

@@ -219,22 +219,23 @@ let private tableGrid : TryNewParser = fun ctx ->
   trimWhitespace >> tryMatch' rx >> map ^| fun (_, line) -> pending line noWrapBlock (nextLine line)
 
 
+/// As in docutils, a simple table ends at the second border line after its top one, or at the
+/// first one that's followed by a blank line
 let private tableSimple : TryNewParser = fun ctx ->
   let rx = regex "^=+(?:\s+=+)+\s*$"
-  let rec afterHeader indent = trimWhitespace >> fun line ->
-    if line.content = "" then ThisLine ^| pending line noWrapBlock (afterHeader indent) else
+  let border = regex "^=[= \t]*$"
+  let rec rows seenBorder indent = trimWhitespace >> fun line ->
+    if line.content = "" then ThisLine ^| pending line noWrapBlock (rows seenBorder indent) else
     let d = prefixWidth ctx line - indent
     if d < 0 then finishedOnPrev_
-    elif d = 0 && isMatch rx line then ThisLine ^| finished_ line noWrapBlock
-    else ThisLine ^| pending line noWrapBlock (afterHeader indent)
-  let rec afterFirst indent = trimWhitespace >> fun line ->
-    if line.content = "" then ThisLine ^| pending line noWrapBlock (afterFirst indent) else
-    let d = prefixWidth ctx line - indent
-    if d < 0 then finishedOnPrev_
-    elif isMatch rx line then ThisLine ^| pending line noWrapBlock (afterHeader indent)
-    else ThisLine ^| pending line noWrapBlock (afterFirst indent)
+    elif d = 0 && isMatch border line then
+      if seenBorder then ThisLine ^| finished_ line noWrapBlock
+      else ThisLine ^| pending line noWrapBlock (afterBorder indent)
+    else ThisLine ^| pending line noWrapBlock (rows seenBorder indent)
+  and afterBorder indent (line: Line) =
+    if isBlankLine line then finishedOnPrev_ else rows true indent line
   trimWhitespace >> tryMatch' rx >> map ^| fun (_, line) ->
-    pending line noWrapBlock (afterFirst (prefixWidth ctx line))
+    pending line noWrapBlock (rows false (prefixWidth ctx line))
 
 
 let private transitionOrTitle : TryNewParser = fun ctx ->
