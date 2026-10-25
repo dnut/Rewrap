@@ -1,5 +1,19 @@
 See also [https://github.com/dnut/rewrap/releases](https://github.com/dnut/rewrap/releases) (for working links to issues)
 
+# 18.4.1
+
+Features:
+- Support Structured Text (IEC 61131-3), including line, block and doc comments
+  (#19).
+- Python: Keep items in Google-style docstring sections such as `Args:` and
+  `Raises:` separate, and indent wrapped descriptions (#26).
+
+Fixes:
+- Markdown: Preserve code blocks after a blockquote containing a list, rather
+  than treating them as part of the list and wrapping them.
+- reStructuredText: Recognise the end of simple tables without headers so that
+  text after them can be wrapped (#45).
+
 # 18.4.0
 
 Features:

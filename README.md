@@ -9,7 +9,7 @@ For <a href="https://marketplace.visualstudio.com/items?itemName=dnut.rewrap-rev
 <a href="https://open-vsx.org/extension/dnut/rewrap-revived"><b>Open VSX</b></a> and
 <a href="https://marketplace.visualstudio.com/items?itemName=stkb.Rewrap-18980">
   <b>Visual Studio</b></a>.<br/>
-Latest stable version <b>18.3.0</b> / pre-release <b>18.4.0</b> /
+Latest stable version <b>18.3.0</b> / pre-release <b>18.4.1</b> /
 <a href="https://github.com/dnut/rewrap/releases">changelog</a>
 </td></tr></table>
 
