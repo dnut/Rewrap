@@ -13,13 +13,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           fetch-depth: 0
+          persist-credentials: false
       - run: git fetch --tags --force origin
-      - uses: cachix/install-nix-action@v27
+      - uses: cachix/install-nix-action@ba0dd844c9180cbf77aa72a116d6fbc515d0e87b # v27
       - run: nix develop -c ./do package
-      - run: nix develop -c ./do release-notes ${GITHUB_REF_NAME#v}
+      - run: nix develop -c ./do release-notes "${GITHUB_REF_NAME#v}"
 
       - name: Read release channel from tag annotation
         id: channel
@@ -35,7 +36,7 @@ jobs:
             exit 1
           fi
 
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2.6.2
         with:
           body_path: release-notes.md
           files: dist/*.vsix
